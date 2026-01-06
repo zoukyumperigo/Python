@@ -1,0 +1,155 @@
+{
+  "settings": {
+    "company_name": "鲜品供应 | FreshSupply Portugal",
+    "whatsapp": "+351912345678",
+    "currency": "€",
+    "currency_position": "before",
+    "show_unit": true,
+    "default_unit": "kg"
+  },
+  "families": [
+    {
+      "id": "seafood",
+      "name_zh": "冷冻海鲜",
+      "name_pt": "Frutos do Mar Congelados",
+      "icon": "🦐",
+      "order": 1
+    },
+    {
+      "id": "meat",
+      "name_zh": "冷冻肉类",
+      "name_pt": "Carnes Congeladas",
+      "icon": "🥩",
+      "order": 2
+    },
+    {
+      "id": "rice",
+      "name_zh": "寿司米",
+      "name_pt": "Arroz para Sushi",
+      "icon": "🍚",
+      "order": 3
+    }
+  ],
+  "products": [
+    {
+      "id": "shrimp-001",
+      "name_zh": "冷冻虾仁",
+      "name_pt": "Camarão descascado",
+      "family": "seafood",
+      "price": 12.50,
+      "unit": "kg",
+      "photo": "images/products/shrimp.jpg",
+      "available": true,
+      "featured": true,
+      "order": 1
+    },
+    {
+      "id": "squid-001",
+      "name_zh": "冷冻鱿鱼圈",
+      "name_pt": "Anéis de lula",
+      "family": "seafood",
+      "price": 8.90,
+      "unit": "kg",
+      "photo": "images/products/squid.jpg",
+      "available": true,
+      "featured": false,
+      "order": 2
+    },
+    {
+      "id": "salmon-001",
+      "name_zh": "冷冻三文鱼片",
+      "name_pt": "Filetes de salmão",
+      "family": "seafood",
+      "price": 18.50,
+      "unit": "kg",
+      "photo": "images/products/salmon.jpg",
+      "available": true,
+      "featured": true,
+      "order": 3
+    },
+    {
+      "id": "seabass-001",
+      "name_zh": "冷冻鲈鱼片",
+      "name_pt": "Filetes de robalo",
+      "family": "seafood",
+      "price": 15.00,
+      "unit": "kg",
+      "photo": "images/products/seabass.jpg",
+      "available": true,
+      "featured": false,
+      "order": 4
+    },
+    {
+      "id": "chicken-leg-001",
+      "name_zh": "冷冻鸡腿肉",
+      "name_pt": "Coxa de frango",
+      "family": "meat",
+      "price": 4.50,
+      "unit": "kg",
+      "photo": "images/products/chicken-leg.jpg",
+      "available": true,
+      "featured": true,
+      "order": 1
+    },
+    {
+      "id": "pork-belly-001",
+      "name_zh": "冷冻猪五花肉片",
+      "name_pt": "Fatias de barriga de porco",
+      "family": "meat",
+      "price": 6.80,
+      "unit": "kg",
+      "photo": "images/products/pork-belly.jpg",
+      "available": true,
+      "featured": true,
+      "order": 2
+    },
+    {
+      "id": "beef-slice-001",
+      "name_zh": "冷冻牛肉片",
+      "name_pt": "Fatias de carne de vaca",
+      "family": "meat",
+      "price": 12.00,
+      "unit": "kg",
+      "photo": "images/products/beef.jpg",
+      "available": true,
+      "featured": false,
+      "order": 3
+    },
+    {
+      "id": "duck-001",
+      "name_zh": "冷冻鸭肉",
+      "name_pt": "Pato congelado",
+      "family": "meat",
+      "price": 8.50,
+      "unit": "kg",
+      "photo": "images/products/duck.jpg",
+      "available": true,
+      "featured": false,
+      "order": 4
+    },
+    {
+      "id": "sushi-rice-001",
+      "name_zh": "日本寿司米",
+      "name_pt": "Arroz japonês para sushi",
+      "family": "rice",
+      "price": 3.50,
+      "unit": "kg",
+      "photo": "images/products/sushi-rice.jpg",
+      "available": true,
+      "featured": true,
+      "order": 1
+    },
+    {
+      "id": "pearl-rice-001",
+      "name_zh": "珍珠米",
+      "name_pt": "Arroz pérola",
+      "family": "rice",
+      "price": 3.20,
+      "unit": "kg",
+      "photo": "images/products/pearl-rice.jpg",
+      "available": true,
+      "featured": false,
+      "order": 2
+    }
+  ]
+}

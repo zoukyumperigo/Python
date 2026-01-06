@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鲜品供应 - 冷冻食材价格目录 | FreshSupply Price Catalog</title>
+    <meta name="description" content="专业冷冻食材供应 - 实时价格 | Fornecedor premium com preços atualizados">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --text-primary: #0a0a0a;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --accent-blue: #2563eb;
+            --price-red: #dc2626;
+            --whatsapp-green: #25d366;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-lg: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: white;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .company-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.01em;
+        }
+
+        .tagline {
+            font-size: 0.875rem;
+            opacity: 0.85;
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            background: var(--bg-secondary);
+            position: sticky;
+            top: 84px;
+            z-index: 90;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .category-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-tab {
+            flex-shrink: 0;
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-tab:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+        }
+
+        .category-tab.active {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        .category-icon {
+            font-size: 1.25rem;
+        }
+
+        /* Products Grid */
+        .products-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+        }
+
+        .category-section {
+            margin-bottom: 3rem;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 3px solid var(--border-color);
+        }
+
+        .category-header-icon {
+            font-size: 2rem;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .category-subtitle {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Product Card */
+        .product-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-blue);
+        }
+
+        .product-card.unavailable {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .product-image-container {
+            position: relative;
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
+            background: var(--bg-secondary);
+            overflow: hidden;
+        }
+
+        .product-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-image-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            opacity: 0.3;
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: var(--price-red);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .product-info {
+            padding: 1.25rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-name-zh {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+
+        .product-name-pt {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .product-price-container {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-price {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--price-red);
+            line-height: 1;
+        }
+
+        .product-unit {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .whatsapp-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.875rem;
+            background: var(--whatsapp-green);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            margin-top: auto;
+        }
+
+        .whatsapp-button:hover {
+            background: #1fb855;
+            transform: scale(1.02);
+        }
+
+        .whatsapp-button:active {
+            transform: scale(0.98);
+        }
+
+        .whatsapp-icon {
+            font-size: 1.25rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 3rem 1rem;
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            padding: 2rem 1rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-top: 3rem;
+        }
+
+        /* Responsive */
+        @media (min-width: 640px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+
+            .category-tabs {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1 class="company-name" id="companyName">鲜品供应 | FreshSupply Portugal</h1>
+        <p class="tagline">专业冷冻食材供应 • 实时价格 • WhatsApp订货</p>
+    </header>
+
+    <!-- Category Tabs -->
+    <nav class="category-tabs" id="categoryTabs">
+        <button class="category-tab active" data-category="all">
+            <span class="category-icon">📋</span>
+            <span>全部产品 | Todos</span>
+        </button>
+    </nav>
+
+    <!-- Products Container -->
+    <main class="products-container">
+        <div id="productsContent">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <div>正在加载产品... | Carregando produtos...</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2026 鲜品供应 | FreshSupply Portugal</p>
+        <p style="margin-top: 0.5rem;">专业冷冻食材供应商 • Fornecedor Premium</p>
+    </footer>
+
+    <script>
+        // Load and display products
+        let catalogData = null;
+        let currentCategory = 'all';
+
+        async function loadCatalog() {
+            try {
+                const response = await fetch('catalog-products.json');
+                catalogData = await response.json();
+
+                // Update company name if available
+                if (catalogData.settings && catalogData.settings.company_name) {
+                    document.getElementById('companyName').textContent = catalogData.settings.company_name;
+                }
+
+                // Render category tabs
+                renderCategoryTabs();
+
+                // Render products
+                renderProducts();
+            } catch (error) {
+                console.error('Error loading catalog:', error);
+                document.getElementById('productsContent').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">❌</div>
+                        <p>无法加载产品目录 | Erro ao carregar catálogo</p>
+                        <p style="margin-top: 0.5rem; font-size: 0.875rem;">请刷新页面重试 | Por favor, recarregue a página</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderCategoryTabs() {
+            const tabsContainer = document.getElementById('categoryTabs');
+
+            // Keep "All" button
+            const allButton = tabsContainer.querySelector('[data-category="all"]');
+            tabsContainer.innerHTML = '';
+            tabsContainer.appendChild(allButton);
+
+            // Add family tabs
+            catalogData.families.forEach(family => {
+                const tab = document.createElement('button');
+                tab.className = 'category-tab';
+                tab.dataset.category = family.id;
+                tab.innerHTML = `
+                    <span class="category-icon">${family.icon}</span>
+                    <span>${family.name_zh}</span>
+                `;
+                tab.addEventListener('click', () => filterCategory(family.id));
+                tabsContainer.appendChild(tab);
+            });
+
+            // Add click handler to "All" button
+            allButton.addEventListener('click', () => filterCategory('all'));
+        }
+
+        function filterCategory(category) {
+            currentCategory = category;
+
+            // Update active tab
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.category === category);
+            });
+
+            // Re-render products
+            renderProducts();
+
+            // Scroll to top of products
+            window.scrollTo({ top: 200, behavior: 'smooth' });
+        }
+
+        function renderProducts() {
+            const container = document.getElementById('productsContent');
+
+            // Filter products
+            let filteredProducts = catalogData.products.filter(p => p.available);
+            if (currentCategory !== 'all') {
+                filteredProducts = filteredProducts.filter(p => p.family === currentCategory);
+            }
+
+            if (filteredProducts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <p>此分类暂无产品 | Nenhum produto nesta categoria</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group by family if showing all
+            if (currentCategory === 'all') {
+                container.innerHTML = '';
+
+                catalogData.families.forEach(family => {
+                    const familyProducts = filteredProducts.filter(p => p.family === family.id);
+                    if (familyProducts.length === 0) return;
+
+                    const section = document.createElement('section');
+                    section.className = 'category-section';
+                    section.innerHTML = `
+                        <div class="category-header">
+                            <span class="category-header-icon">${family.icon}</span>
+                            <div>
+                                <h2 class="category-title">
+                                    ${family.name_zh}
+                                    <span class="category-subtitle">${family.name_pt}</span>
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="products-grid">
+                            ${familyProducts.map(product => renderProductCard(product)).join('')}
+                        </div>
+                    `;
+                    container.appendChild(section);
+                });
+            } else {
+                // Single category view
+                const family = catalogData.families.find(f => f.id === currentCategory);
+                container.innerHTML = `
+                    <section class="category-section">
+                        <div class="category-header">
+                            <span class="category-header-icon">${family.icon}</span>
+                            <div>
+                                <h2 class="category-title">
+                                    ${family.name_zh}
+                                    <span class="category-subtitle">${family.name_pt}</span>
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="products-grid">
+                            ${filteredProducts.map(product => renderProductCard(product)).join('')}
+                        </div>
+                    </section>
+                `;
+            }
+        }
+
+        function renderProductCard(product) {
+            const settings = catalogData.settings;
+            const currency = settings.currency || '€';
+            const price = product.price.toFixed(2);
+            const unit = product.unit || settings.default_unit || 'kg';
+            const whatsapp = settings.whatsapp || '';
+
+            // Create WhatsApp message
+            const message = `您好！我想订购：\n${product.name_zh} (${product.name_pt})\n价格：${currency}${price}/${unit}\n\nOlá! Gostaria de encomendar:\n${product.name_pt}\nPreço: ${currency}${price}/${unit}`;
+            const whatsappLink = `https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
+
+            return `
+                <article class="product-card ${!product.available ? 'unavailable' : ''}">
+                    <div class="product-image-container">
+                        ${product.photo ?
+                            `<img src="${product.photo}" alt="${product.name_zh}" class="product-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                             <div class="product-image-placeholder" style="display:none;">📦</div>` :
+                            `<div class="product-image-placeholder">📦</div>`
+                        }
+                        ${product.featured ? '<span class="featured-badge">推荐 | TOP</span>' : ''}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name-zh">${product.name_zh}</h3>
+                        <p class="product-name-pt">${product.name_pt}</p>
+                        <div class="product-price-container">
+                            <span class="product-price">${currency}${price}</span>
+                            <span class="product-unit">/ ${unit}</span>
+                        </div>
+                        <a href="${whatsappLink}" class="whatsapp-button" target="_blank">
+                            <span class="whatsapp-icon">💬</span>
+                            <span>WhatsApp 订货 | Pedir</span>
+                        </a>
+                    </div>
+                </article>
+            `;
+        }
+
+        // Initialize
+        loadCatalog();
+    </script>
+</body>
+</html>
