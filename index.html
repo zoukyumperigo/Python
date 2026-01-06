@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="专业冷冻食材供应商 - 服务葡萄牙中餐业 | Fornecedor premium de produtos congelados para restaurantes chineses">
+    <title>鲜品供应 | FreshSupply Portugal - 冷冻食材目录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1a1a1a;
+            --secondary-color: #2d5aff;
+            --accent-color: #00d4ff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666;
+            --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
+            --border-color: #e5e5e5;
+            --success-color: #00c853;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+            --spacing-xxl: 4rem;
+            --border-radius: 12px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-white);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            padding: var(--spacing-xxl) var(--spacing-md);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><rect fill="rgba(255,255,255,0.02)" width="30" height="30"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .company-name {
+            font-size: clamp(1.75rem, 5vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+            letter-spacing: -0.02em;
+        }
+
+        .slogan {
+            font-size: clamp(1rem, 3vw, 1.25rem);
+            margin-bottom: var(--spacing-xs);
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        .slogan-secondary {
+            font-size: clamp(0.875rem, 2.5vw, 1rem);
+            opacity: 0.75;
+            font-weight: 400;
+        }
+
+        .trust-signals {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-xl);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .trust-item {
+            text-align: center;
+            padding: var(--spacing-md);
+        }
+
+        .trust-icon {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-xs);
+            display: block;
+        }
+
+        .trust-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .trust-subtitle {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* Section Styles */
+        section {
+            padding: var(--spacing-xxl) var(--spacing-md);
+        }
+
+        section:nth-child(even) {
+            background: var(--bg-light);
+        }
+
+        .section-title {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+            letter-spacing: -0.01em;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xl);
+            font-size: clamp(0.875rem, 2.5vw, 1rem);
+        }
+
+        /* How to Order Section */
+        .order-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            max-width: 1000px;
+            margin: 0 auto var(--spacing-xl);
+        }
+
+        .step {
+            background: var(--bg-white);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .step:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .step-text {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .step-subtext {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .order-example {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--secondary-color);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .example-title {
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+            color: var(--secondary-color);
+        }
+
+        .example-text {
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            white-space: pre-line;
+        }
+
+        /* Product Categories */
+        .category {
+            margin-bottom: var(--spacing-xxl);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .category-icon {
+            font-size: 2.5rem;
+        }
+
+        .category-title {
+            font-size: clamp(1.5rem, 4vw, 1.875rem);
+            font-weight: 700;
+        }
+
+        .category-name {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--spacing-md);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .product-card:hover {
+            border-color: var(--secondary-color);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .product-name-zh {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+            color: var(--text-primary);
+        }
+
+        .product-name-pt {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .product-unit {
+            display: inline-block;
+            background: var(--bg-light);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+            color: var(--secondary-color);
+        }
+
+        .product-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            border-top: 1px solid var(--border-color);
+            padding-top: var(--spacing-sm);
+            margin-top: var(--spacing-sm);
+        }
+
+        .product-description span {
+            display: block;
+        }
+
+        .product-description span:first-child {
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+
+        /* Why Choose Us */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: var(--spacing-lg);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .benefit-card {
+            background: var(--bg-white);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--success-color);
+        }
+
+        .benefit-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .benefit-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+        }
+
+        .benefit-description {
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .benefit-description span {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #1a3fd4 100%);
+            color: white;
+            text-align: center;
+            padding: var(--spacing-xxl) var(--spacing-md);
+        }
+
+        .contact-title {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .whatsapp-button {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            background: var(--success-color);
+            color: white;
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: 50px;
+            font-size: 1.125rem;
+            font-weight: 700;
+            text-decoration: none;
+            margin-top: var(--spacing-lg);
+            transition: all 0.3s;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .whatsapp-button:hover {
+            background: #00b043;
+            transform: scale(1.05);
+            box-shadow: 0 12px 40px rgba(0,200,83,0.3);
+        }
+
+        .whatsapp-icon {
+            font-size: 1.5rem;
+        }
+
+        .contact-subtitle {
+            margin-top: var(--spacing-md);
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: var(--spacing-lg);
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero {
+                padding: var(--spacing-xl) var(--spacing-md);
+            }
+
+            section {
+                padding: var(--spacing-xl) var(--spacing-md);
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .order-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .trust-signals {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media print {
+            .whatsapp-button {
+                background: var(--success-color) !important;
+                color: white !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="company-name">鲜品供应 | FreshSupply Portugal</h1>
+            <p class="slogan">专业冷冻食材，服务葡萄牙中餐业</p>
+            <p class="slogan-secondary">Produtos congelados premium para restaurantes chineses</p>
+
+            <div class="trust-signals">
+                <div class="trust-item">
+                    <span class="trust-icon">❄️</span>
+                    <div class="trust-title">全程冷链</div>
+                    <div class="trust-subtitle">Cadeia de frio completa</div>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-icon">🚚</span>
+                    <div class="trust-title">快速配送</div>
+                    <div class="trust-subtitle">Entrega rápida</div>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-icon">✓</span>
+                    <div class="trust-title">品质保证</div>
+                    <div class="trust-subtitle">Qualidade garantida</div>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-icon">🤝</span>
+                    <div class="trust-title">长期合作</div>
+                    <div class="trust-subtitle">Parceria de longo prazo</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How to Order Section -->
+    <section id="order">
+        <div class="container">
+            <h2 class="section-title">如何订货 | Como Fazer Pedido</h2>
+
+            <div class="order-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-text">通过WhatsApp联系我们</div>
+                    <div class="step-subtext">Contacte-nos via WhatsApp</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">告知：餐厅名称 + 产品 + 数量</div>
+                    <div class="step-subtext">Informe: Nome + Produto + Quantidade</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">我们确认订单和配送时间</div>
+                    <div class="step-subtext">Confirmamos pedido e entrega</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-text">快速送达，冷链直达</div>
+                    <div class="step-subtext">Entrega rápida com cadeia de frio</div>
+                </div>
+            </div>
+
+            <div class="order-example">
+                <div class="example-title">📝 示例订单 | Exemplo de Pedido</div>
+                <div class="example-text">金龙餐厅
+冷冻虾仁 5kg
+冷冻鸡腿肉 10kg
+
+Restaurante Golden Dragon
+Camarão 5kg
+Coxa de frango 10kg</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products">
+        <div class="container">
+            <h2 class="section-title">产品目录 | Catálogo de Produtos</h2>
+
+            <!-- Frozen Seafood -->
+            <div class="category">
+                <div class="category-header">
+                    <span class="category-icon">🦐</span>
+                    <div>
+                        <h3 class="category-title">
+                            冷冻海鲜
+                            <span class="category-name">Frutos do Mar Congelados</span>
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="products-grid">
+                    <div class="product-card">
+                        <div class="product-name-zh">冷冻虾仁</div>
+                        <div class="product-name-pt">Camarão descascado</div>
+                        <span class="product-unit">1kg</span>
+                        <div class="product-description">
+                            <span>适用于炒菜、汤品</span>
+                            <span>Ideal para salteados e sopas</span>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-name-zh">冷冻鱿鱼圈</div>
+                        <div class="product-name-pt">Anéis de lula</div>
+                        <span class="product-unit">1kg</span>
+                        <div class="product-description">
+                            <span>适用于铁板、炒菜</span>
+                            <span>Perfeito para grelhados e salteados</span>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-name-zh">冷冻带鱼段</div>
+                        <div class="product-name-pt">Peixe-espada congelado</div>
+                        <span class="product-unit">1kg</span>
+                        <div class="product-description">
+                            <span>适用于红烧、干煎</span>
+                            <span>Ideal para brasear ou fritar</span>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-name-zh">冷冻墨鱼</div>
+                        <div class="product-name-pt">Choco congelado</div>
+                        <span class="product-unit">1kg</span>
+                        <div class="product-description">
+                            <span>适用于炒菜、煲汤</span>
+                            <span>Perfeito para salteados e caldos</span>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-name-zh">冷冻三文鱼片</div>
+                        <div class="product-name-pt">Filetes de salmão</div>
+                        <span class="product-unit">1kg</span>
+                        <div class="product-description">
+                            <span>适用于刺身、寿司、煎烤</span>
+                            <span>Ideal para sashimi, sushi e grelhados</span>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-name-zh">冷冻扇贝肉</div>
+                        <div class="product-name-pt">Vieiras</div>
+                        <span class="product-unit">500g</span>
+                        <div class="product-description">
+                            <span>适用于蒜蓉蒸、炒菜</span>
+                            <span>Perfeito para vapor com alho</span>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-name-zh">冷冻鲈鱼片</div>
+                        <div class="product-name-pt">Filetes de robalo</div>
+                        <span class="product-unit">1kg</span>
+                        <div class="product-description">
+                            <span>适用于清蒸、煎烤</span>
+                            <span>Ideal para vapor ou grelhados</span>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-name-zh">冷冻章鱼</div>
+                        <div class="product-name-pt">Polvo congelado</div>
+                        <span class="product-unit">1kg</span>
+                        <div class="product-description">
+                            <span>适用于卤水、凉拌</span>
+                            <span>Perfeito para cozido ou saladas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Frozen Meat -->
+            <div class="category">
+                <div class="category-header">
+                    <span class="category-icon">🥩</span>
+                    <div>
+                        <h3 class="category-title">
+                            冷冻肉类
+                            <span class="category-name">Carnes Congeladas</span>
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="products-grid">
+                    <div class="product-card">
+                        <div class="product-name-zh">冷冻鸡腿肉</div>
+                        <div class="product-name-pt">Coxa de frango</div>
+                        <span class="product-unit">5kg</span>
+                        <div class="product-description">
+                            <span>适用于宫保、炒菜</span>
+                            <span>Ideal para salteados e Kung Pao</span>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-name-zh">冷冻鸡胸肉</div>
+                        <div class="product-name-pt">Peito de frango</div>
+                        <span class="product-unit">5kg</span>
+                        <div class="product-description">
+                            <span>适用于炒菜、煎烤</span>
+                            <span>Perfeito para salteados e grelhados</span>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-name-zh">冷冻猪五花肉片</div>
+                        <div class="product-name-pt">Fatias de barriga de porco</div>
+                        <span class="product-unit">5kg</span>
+                        <div class="product-description">
+                            <span>适用于回锅肉、红烧</span>
+                            <span>Ideal para Twice-cooked pork</span>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-name-zh">冷冻牛肉片</div>
+                        <div class="product-name-pt">Fatias de carne de vaca</div>
+                        <span class="product-unit">2kg</span>
+                        <div class="product-description">
+                            <span>适用于炒菜、火锅</span>
+                            <span>Perfeito para salteados e hot pot</span>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-name-zh">冷冻排骨</div>
+                        <div class="product-name-pt">Costelas de porco</div>
+                        <span class="product-unit">5kg</span>
+                        <div class="product-description">
+                            <span>适用于糖醋、煲汤</span>
+                            <span>Ideal para agridoce e caldos</span>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-name-zh">冷冻鸭肉</div>
+                        <div class="product-name-pt">Pato congelado</div>
+                        <span class="product-unit">整只 / unidade completa</span>
+                        <div class="product-description">
+                            <span>适用于北京烤鸭、煲汤</span>
+                            <span>Perfeito para Pato de Pequim</span>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-name-zh">冷冻牛腱</div>
+                        <div class="product-name-pt">Músculo de vaca</div>
+                        <span class="product-unit">2kg</span>
+                        <div class="product-description">
+                            <span>适用于卤水、红烧</span>
+                            <span>Ideal para brasear e estufar</span>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-name-zh">冷冻鸡翅</div>
+                        <div class="product-name-pt">Asas de frango</div>
+                        <span class="product-unit">3kg</span>
+                        <div class="product-description">
+                            <span>适用于烤制、油炸</span>
+                            <span>Perfeito para assar ou fritar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sushi Rice -->
+            <div class="category">
+                <div class="category-header">
+                    <span class="category-icon">🍚</span>
+                    <div>
+                        <h3 class="category-title">
+                            寿司米
+                            <span class="category-name">Arroz para Sushi</span>
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="products-grid">
+                    <div class="product-card">
+                        <div class="product-name-zh">日本寿司米</div>
+                        <div class="product-name-pt">Arroz japonês para sushi</div>
+                        <span class="product-unit">10kg</span>
+                        <div class="product-description">
+                            <span>高品质寿司专用米</span>
+                            <span>Arroz premium específico para sushi</span>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-name-zh">珍珠米</div>
+                        <div class="product-name-pt">Arroz pérola</div>
+                        <span class="product-unit">10kg</span>
+                        <div class="product-description">
+                            <span>适用于寿司、饭团</span>
+                            <span>Ideal para sushi e onigiri</span>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-name-zh">圆粒米</div>
+                        <div class="product-name-pt">Arroz redondo</div>
+                        <span class="product-unit">10kg</span>
+                        <div class="product-description">
+                            <span>粘性强，适合寿司</span>
+                            <span>Alta aderência, perfeito para sushi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us Section -->
+    <section id="why-us">
+        <div class="container">
+            <h2 class="section-title">为什么选择我们 | Por Que Escolher-nos</h2>
+
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-title">严格品控</div>
+                    <div class="benefit-subtitle">Controle de Qualidade Rigoroso</div>
+                    <div class="benefit-description">
+                        <span>每批产品经过专业检验，确保品质稳定</span>
+                        <span>Cada lote é inspecionado profissionalmente para garantir qualidade consistente</span>
+                    </div>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-title">全程冷链运输</div>
+                    <div class="benefit-subtitle">Cadeia de Frio Completa</div>
+                    <div class="benefit-description">
+                        <span>从仓库到餐厅，全程温度监控，保证新鲜</span>
+                        <span>Do armazém ao restaurante, temperatura controlada para garantir frescura</span>
+                    </div>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-title">稳定供货</div>
+                    <div class="benefit-subtitle">Fornecimento Estável</div>
+                    <div class="benefit-description">
+                        <span>库存充足，按时送达，不影响您的营业</span>
+                        <span>Stock abundante, entrega pontual, sem interrupções no seu negócio</span>
+                    </div>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-title">长期合作伙伴</div>
+                    <div class="benefit-subtitle">Parceiro de Longo Prazo</div>
+                    <div class="benefit-description">
+                        <span>我们重视与每位客户的长久关系</span>
+                        <span>Valorizamos relacionamentos duradouros com cada cliente</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <h2 class="contact-title">立即通过WhatsApp订货</h2>
+            <p class="contact-subtitle">Faça seu pedido agora via WhatsApp</p>
+
+            <a href="https://wa.me/351XXXXXXXXX?text=您好！我想订货%20%7C%20Olá!%20Gostaria%20de%20fazer%20um%20pedido" class="whatsapp-button">
+                <span class="whatsapp-icon">💬</span>
+                WhatsApp 订货 | Fazer Pedido
+            </a>
+
+            <p class="contact-subtitle" style="margin-top: 2rem;">
+                +351 XXX XXX XXX
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            © 2026 鲜品供应 | FreshSupply Portugal - 专业冷冻食材供应商
+        </div>
+    </footer>
+</body>
+</html>

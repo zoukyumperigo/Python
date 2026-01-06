@@ -1,0 +1,253 @@
+{
+  "company": {
+    "name": "鲜品供应 | FreshSupply Portugal",
+    "slogan_zh": "专业冷冻食材，服务葡萄牙中餐业",
+    "slogan_pt": "Produtos congelados premium para restaurantes chineses",
+    "slogan_en": "Premium frozen products for Chinese restaurants"
+  },
+  "trust_signals": [
+    {
+      "icon": "❄️",
+      "title_zh": "全程冷链",
+      "title_pt": "Cadeia de frio completa"
+    },
+    {
+      "icon": "🚚",
+      "title_zh": "快速配送",
+      "title_pt": "Entrega rápida"
+    },
+    {
+      "icon": "✓",
+      "title_zh": "品质保证",
+      "title_pt": "Qualidade garantida"
+    },
+    {
+      "icon": "🤝",
+      "title_zh": "长期合作",
+      "title_pt": "Parceria de longo prazo"
+    }
+  ],
+  "categories": [
+    {
+      "id": "seafood",
+      "name_zh": "冷冻海鲜",
+      "name_pt": "Frutos do Mar Congelados",
+      "name_en": "Frozen Seafood",
+      "icon": "🦐",
+      "products": [
+        {
+          "name_zh": "冷冻虾仁",
+          "name_pt": "Camarão descascado",
+          "unit": "1kg",
+          "description_zh": "适用于炒菜、汤品",
+          "description_pt": "Ideal para salteados e sopas"
+        },
+        {
+          "name_zh": "冷冻鱿鱼圈",
+          "name_pt": "Anéis de lula",
+          "unit": "1kg",
+          "description_zh": "适用于铁板、炒菜",
+          "description_pt": "Perfeito para grelhados e salteados"
+        },
+        {
+          "name_zh": "冷冻带鱼段",
+          "name_pt": "Peixe-espada congelado",
+          "unit": "1kg",
+          "description_zh": "适用于红烧、干煎",
+          "description_pt": "Ideal para brasear ou fritar"
+        },
+        {
+          "name_zh": "冷冻墨鱼",
+          "name_pt": "Choco congelado",
+          "unit": "1kg",
+          "description_zh": "适用于炒菜、煲汤",
+          "description_pt": "Perfeito para salteados e caldos"
+        },
+        {
+          "name_zh": "冷冻三文鱼片",
+          "name_pt": "Filetes de salmão",
+          "unit": "1kg",
+          "description_zh": "适用于刺身、寿司、煎烤",
+          "description_pt": "Ideal para sashimi, sushi e grelhados"
+        },
+        {
+          "name_zh": "冷冻扇贝肉",
+          "name_pt": "Vieiras",
+          "unit": "500g",
+          "description_zh": "适用于蒜蓉蒸、炒菜",
+          "description_pt": "Perfeito para vapor com alho ou salteados"
+        },
+        {
+          "name_zh": "冷冻鲈鱼片",
+          "name_pt": "Filetes de robalo",
+          "unit": "1kg",
+          "description_zh": "适用于清蒸、煎烤",
+          "description_pt": "Ideal para vapor ou grelhados"
+        },
+        {
+          "name_zh": "冷冻章鱼",
+          "name_pt": "Polvo congelado",
+          "unit": "1kg",
+          "description_zh": "适用于卤水、凉拌",
+          "description_pt": "Perfeito para cozido ou saladas"
+        }
+      ]
+    },
+    {
+      "id": "meat",
+      "name_zh": "冷冻肉类",
+      "name_pt": "Carnes Congeladas",
+      "name_en": "Frozen Meat",
+      "icon": "🥩",
+      "products": [
+        {
+          "name_zh": "冷冻鸡腿肉",
+          "name_pt": "Coxa de frango",
+          "unit": "5kg",
+          "description_zh": "适用于宫保、炒菜",
+          "description_pt": "Ideal para salteados e Kung Pao"
+        },
+        {
+          "name_zh": "冷冻鸡胸肉",
+          "name_pt": "Peito de frango",
+          "unit": "5kg",
+          "description_zh": "适用于炒菜、煎烤",
+          "description_pt": "Perfeito para salteados e grelhados"
+        },
+        {
+          "name_zh": "冷冻猪五花肉片",
+          "name_pt": "Fatias de barriga de porco",
+          "unit": "5kg",
+          "description_zh": "适用于回锅肉、红烧",
+          "description_pt": "Ideal para Twice-cooked pork e brasear"
+        },
+        {
+          "name_zh": "冷冻牛肉片",
+          "name_pt": "Fatias de carne de vaca",
+          "unit": "2kg",
+          "description_zh": "适用于炒菜、火锅",
+          "description_pt": "Perfeito para salteados e hot pot"
+        },
+        {
+          "name_zh": "冷冻排骨",
+          "name_pt": "Costelas de porco",
+          "unit": "5kg",
+          "description_zh": "适用于糖醋、煲汤",
+          "description_pt": "Ideal para agridoce e caldos"
+        },
+        {
+          "name_zh": "冷冻鸭肉",
+          "name_pt": "Pato congelado",
+          "unit": "整只 / unidade completa",
+          "description_zh": "适用于北京烤鸭、煲汤",
+          "description_pt": "Perfeito para Pato de Pequim e caldos"
+        },
+        {
+          "name_zh": "冷冻牛腱",
+          "name_pt": "Músculo de vaca",
+          "unit": "2kg",
+          "description_zh": "适用于卤水、红烧",
+          "description_pt": "Ideal para brasear e estufar"
+        },
+        {
+          "name_zh": "冷冻鸡翅",
+          "name_pt": "Asas de frango",
+          "unit": "3kg",
+          "description_zh": "适用于烤制、油炸",
+          "description_pt": "Perfeito para assar ou fritar"
+        }
+      ]
+    },
+    {
+      "id": "rice",
+      "name_zh": "寿司米",
+      "name_pt": "Arroz para Sushi",
+      "name_en": "Sushi Rice",
+      "icon": "🍚",
+      "products": [
+        {
+          "name_zh": "日本寿司米",
+          "name_pt": "Arroz japonês para sushi",
+          "unit": "10kg",
+          "description_zh": "高品质寿司专用米",
+          "description_pt": "Arroz premium específico para sushi"
+        },
+        {
+          "name_zh": "珍珠米",
+          "name_pt": "Arroz pérola",
+          "unit": "10kg",
+          "description_zh": "适用于寿司、饭团",
+          "description_pt": "Ideal para sushi e onigiri"
+        },
+        {
+          "name_zh": "圆粒米",
+          "name_pt": "Arroz redondo",
+          "unit": "10kg",
+          "description_zh": "粘性强，适合寿司",
+          "description_pt": "Alta aderência, perfeito para sushi"
+        }
+      ]
+    }
+  ],
+  "why_choose_us": [
+    {
+      "title_zh": "严格品控",
+      "title_pt": "Controle de Qualidade Rigoroso",
+      "description_zh": "每批产品经过专业检验，确保品质稳定",
+      "description_pt": "Cada lote é inspecionado profissionalmente para garantir qualidade consistente"
+    },
+    {
+      "title_zh": "全程冷链运输",
+      "title_pt": "Cadeia de Frio Completa",
+      "description_zh": "从仓库到餐厅，全程温度监控，保证新鲜",
+      "description_pt": "Do armazém ao restaurante, temperatura controlada para garantir frescura"
+    },
+    {
+      "title_zh": "稳定供货",
+      "title_pt": "Fornecimento Estável",
+      "description_zh": "库存充足，按时送达，不影响您的营业",
+      "description_pt": "Stock abundante, entrega pontual, sem interrupções no seu negócio"
+    },
+    {
+      "title_zh": "长期合作伙伴",
+      "title_pt": "Parceiro de Longo Prazo",
+      "description_zh": "我们重视与每位客户的长久关系",
+      "description_pt": "Valorizamos relacionamentos duradouros com cada cliente"
+    }
+  ],
+  "how_to_order": {
+    "title_zh": "如何订货",
+    "title_pt": "Como Fazer Pedido",
+    "steps": [
+      {
+        "number": "1",
+        "text_zh": "通过WhatsApp联系我们",
+        "text_pt": "Contacte-nos via WhatsApp"
+      },
+      {
+        "number": "2",
+        "text_zh": "告知：餐厅名称 + 产品 + 数量",
+        "text_pt": "Informe: Nome do restaurante + Produto + Quantidade"
+      },
+      {
+        "number": "3",
+        "text_zh": "我们确认订单和配送时间",
+        "text_pt": "Confirmamos o pedido e horário de entrega"
+      },
+      {
+        "number": "4",
+        "text_zh": "快速送达，冷链直达",
+        "text_pt": "Entrega rápida com cadeia de frio"
+      }
+    ],
+    "example_zh": "示例订单：\n金龙餐厅 / 冷冻虾仁 5kg / 冷冻鸡腿肉 10kg",
+    "example_pt": "Exemplo de pedido:\nRestaurante Golden Dragon / Camarão 5kg / Coxa de frango 10kg"
+  },
+  "contact": {
+    "whatsapp": "+351 XXX XXX XXX",
+    "cta_zh": "立即通过WhatsApp订货",
+    "cta_pt": "Faça seu pedido agora via WhatsApp",
+    "message_template_zh": "您好！我想订货：",
+    "message_template_pt": "Olá! Gostaria de fazer um pedido:"
+  }
+}
