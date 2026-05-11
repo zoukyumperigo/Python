@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Spoke Dispatch{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-sub">Good morning, Dispatcher — here's today's overview</p>
+  </div>
+  <div class="header-actions">
+    <a href="/routes" class="btn-primary">+ New Route</a>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Active Drivers</div>
+    <div class="stat-value">{{ stats.active_drivers }}</div>
+    <div class="stat-sub">of {{ stats.total_drivers }} total</div>
+  </div>
+  <div class="stat-card stat-card--blue">
+    <div class="stat-label">Active Routes</div>
+    <div class="stat-value">{{ stats.active_routes }}</div>
+    <div class="stat-sub">in progress now</div>
+  </div>
+  <div class="stat-card stat-card--amber">
+    <div class="stat-label">Pending Deliveries</div>
+    <div class="stat-value">{{ stats.pending_deliveries }}</div>
+    <div class="stat-sub">awaiting dispatch</div>
+  </div>
+  <div class="stat-card stat-card--green">
+    <div class="stat-label">Delivered Today</div>
+    <div class="stat-value">{{ stats.delivered_today }}</div>
+    <div class="stat-sub">completed successfully</div>
+  </div>
+</div>
+
+<div class="dashboard-grid">
+  <!-- Map panel -->
+  <div class="panel panel--map">
+    <div class="panel-header">
+      <h2>Live Map</h2>
+      <a href="/tracking" class="panel-link">Full tracking view →</a>
+    </div>
+    <div id="dashboard-map"></div>
+  </div>
+
+  <!-- Recent activity -->
+  <div class="panel">
+    <div class="panel-header">
+      <h2>Recent Deliveries</h2>
+      <a href="/deliveries" class="panel-link">View all →</a>
+    </div>
+    <div id="recent-deliveries" class="activity-list">
+      <div class="loading-state">Loading...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick driver status -->
+<div class="panel">
+  <div class="panel-header">
+    <h2>Driver Status</h2>
+    <a href="/drivers" class="panel-link">Manage drivers →</a>
+  </div>
+  <div id="driver-status-list" class="driver-list">
+    <div class="loading-state">Loading...</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const map = L.map('dashboard-map').setView([40.73, -73.97], 11);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+const driverMarkers = {};
+
+function driverIcon(status) {
+  const color = status === 'on_route' ? '#3b82f6' : '#6b7280';
+  return L.divIcon({
+    className: '',
+    html: `<div style="background:${color};width:16px;height:16px;border-radius:50%;border:2px solid white;box-shadow:0 1px 6px rgba(0,0,0,.5)"></div>`,
+    iconSize: [16,16], iconAnchor:[8,8]
+  });
+}
+
+async function loadDashboard() {
+  const [drivers, deliveries] = await Promise.all([
+    fetch('/api/drivers').then(r => r.json()),
+    fetch('/api/deliveries').then(r => r.json()),
+  ]);
+
+  // Update map markers
+  drivers.forEach(d => {
+    if (driverMarkers[d.id]) {
+      driverMarkers[d.id].setLatLng([d.lat, d.lon]);
+    } else {
+      driverMarkers[d.id] = L.marker([d.lat, d.lon], {icon: driverIcon(d.status)})
+        .bindPopup(`<strong>${d.name}</strong><br>${d.status}`)
+        .addTo(map);
+    }
+  });
+
+  // Delivery pins
+  const recent = deliveries.slice(0, 10);
+  recent.forEach(del => {
+    const color = del.status === 'delivered' ? '#10b981' : del.status === 'assigned' ? '#f59e0b' : '#e5e7eb';
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="background:${color};width:10px;height:10px;border-radius:50%;border:2px solid white"></div>`,
+      iconSize:[10,10], iconAnchor:[5,5]
+    });
+    L.marker([del.lat, del.lon], {icon}).bindTooltip(del.recipient_name).addTo(map);
+  });
+
+  // Recent deliveries panel
+  const panel = document.getElementById('recent-deliveries');
+  panel.innerHTML = deliveries.slice(0, 8).map(d => `
+    <div class="activity-item">
+      <span class="status-badge status-${d.status}">${d.status}</span>
+      <div class="activity-info">
+        <strong>${d.recipient_name}</strong>
+        <span class="activity-addr">${d.address}</span>
+      </div>
+      ${d.time_window_start ? `<span class="activity-time">${d.time_window_start}–${d.time_window_end}</span>` : ''}
+    </div>
+  `).join('');
+
+  // Driver list
+  const dl = document.getElementById('driver-status-list');
+  dl.innerHTML = drivers.map(d => `
+    <div class="driver-row">
+      <div class="driver-avatar">${d.name.split(' ').map(n=>n[0]).join('')}</div>
+      <div class="driver-info">
+        <strong>${d.name}</strong>
+        <span>${d.vehicle_type}</span>
+      </div>
+      <span class="status-badge status-${d.status}">${d.status.replace('_',' ')}</span>
+    </div>
+  `).join('');
+}
+
+loadDashboard();
+setInterval(loadDashboard, 15000);
+</script>
+{% endblock %}

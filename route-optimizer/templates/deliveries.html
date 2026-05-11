@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block title %}Deliveries — Spoke Dispatch{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Deliveries</h1>
+    <p class="page-sub">Manage all delivery stops and their assignments</p>
+  </div>
+  <div class="header-actions">
+    <input type="text" id="search-input" class="form-input search-input" placeholder="Search recipient or address…">
+    <select id="filter-status" class="form-input filter-select">
+      <option value="">All statuses</option>
+      <option value="pending">Pending</option>
+      <option value="assigned">Assigned</option>
+      <option value="delivered">Delivered</option>
+      <option value="failed">Failed</option>
+    </select>
+    <button class="btn-primary" id="add-delivery-btn">+ Add Delivery</button>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table class="data-table" id="deliveries-table">
+    <thead>
+      <tr>
+        <th>Recipient</th>
+        <th>Address</th>
+        <th>Time Window</th>
+        <th>Load</th>
+        <th>Status</th>
+        <th>Driver</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="deliveries-tbody">
+      {% for d in deliveries %}
+      <tr class="delivery-row" data-status="{{ d.status }}" data-name="{{ d.recipient_name.lower() }}" data-addr="{{ d.address.lower() }}">
+        <td><strong>{{ d.recipient_name }}</strong></td>
+        <td class="addr-cell">{{ d.address }}</td>
+        <td>{% if d.time_window_start %}{{ d.time_window_start }}–{{ d.time_window_end }}{% else %}—{% endif %}</td>
+        <td>{{ d.load }}</td>
+        <td><span class="status-badge status-{{ d.status }}">{{ d.status }}</span></td>
+        <td>
+          {% if d.driver_id %}
+            {% for driver in drivers %}{% if driver.id == d.driver_id %}{{ driver.name }}{% endif %}{% endfor %}
+          {% else %}—{% endif %}
+        </td>
+        <td class="actions-cell">
+          <select class="status-select" onchange="updateStatus({{ d.id }}, this.value)">
+            <option value="pending" {% if d.status=='pending' %}selected{% endif %}>Pending</option>
+            <option value="assigned" {% if d.status=='assigned' %}selected{% endif %}>Assigned</option>
+            <option value="delivered" {% if d.status=='delivered' %}selected{% endif %}>Delivered</option>
+            <option value="failed" {% if d.status=='failed' %}selected{% endif %}>Failed</option>
+          </select>
+          <button class="btn-danger btn-sm" onclick="deleteDelivery({{ d.id }}, this)">✕</button>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="empty-table">No deliveries found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Add delivery modal -->
+<div id="delivery-modal" class="modal-overlay hidden">
+  <div class="modal modal--wide">
+    <div class="modal-header">
+      <h3>Add Delivery Stop</h3>
+      <button class="modal-close" id="close-delivery-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row form-row--2col">
+        <div class="form-group">
+          <label>Recipient name *</label>
+          <input type="text" id="nd-name" class="form-input" placeholder="Jane Smith">
+        </div>
+        <div class="form-group">
+          <label>Address *</label>
+          <input type="text" id="nd-address" class="form-input" placeholder="123 Main St, New York, NY">
+        </div>
+      </div>
+      <div class="form-row form-row--2col">
+        <div class="form-group">
+          <label>Latitude *</label>
+          <input type="number" id="nd-lat" class="form-input" placeholder="40.7128" step="0.0001">
+        </div>
+        <div class="form-group">
+          <label>Longitude *</label>
+          <input type="number" id="nd-lon" class="form-input" placeholder="-74.0060" step="0.0001">
+        </div>
+      </div>
+      <div class="form-row form-row--3col">
+        <div class="form-group">
+          <label>Load (units)</label>
+          <input type="number" id="nd-load" class="form-input" value="1" step="0.1" min="0">
+        </div>
+        <div class="form-group">
+          <label>Window start</label>
+          <input type="time" id="nd-start" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Window end</label>
+          <input type="time" id="nd-end" class="form-input">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="nd-notes" class="form-input" rows="2" placeholder="Leave at door, ring bell twice…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" id="cancel-delivery-modal">Cancel</button>
+      <button class="btn-primary" id="save-delivery-btn">Save Delivery</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Filtering
+const searchInput = document.getElementById('search-input');
+const filterStatus = document.getElementById('filter-status');
+
+function filterRows() {
+  const q = searchInput.value.toLowerCase();
+  const st = filterStatus.value;
+  document.querySelectorAll('.delivery-row').forEach(row => {
+    const matchQ = !q || row.dataset.name.includes(q) || row.dataset.addr.includes(q);
+    const matchS = !st || row.dataset.status === st;
+    row.style.display = matchQ && matchS ? '' : 'none';
+  });
+}
+
+searchInput.addEventListener('input', filterRows);
+filterStatus.addEventListener('change', filterRows);
+
+async function updateStatus(id, status) {
+  await fetch(`/api/deliveries/${id}`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({status})
+  });
+}
+
+async function deleteDelivery(id, btn) {
+  if (!confirm('Delete this delivery?')) return;
+  await fetch(`/api/deliveries/${id}`, {method:'DELETE'});
+  btn.closest('tr').remove();
+}
+
+// Modal
+document.getElementById('add-delivery-btn').addEventListener('click', () =>
+  document.getElementById('delivery-modal').classList.remove('hidden'));
+['close-delivery-modal','cancel-delivery-modal'].forEach(id =>
+  document.getElementById(id).addEventListener('click', () =>
+    document.getElementById('delivery-modal').classList.add('hidden')));
+
+document.getElementById('save-delivery-btn').addEventListener('click', async () => {
+  const body = {
+    recipient_name: document.getElementById('nd-name').value,
+    address: document.getElementById('nd-address').value,
+    lat: parseFloat(document.getElementById('nd-lat').value),
+    lon: parseFloat(document.getElementById('nd-lon').value),
+    load: parseFloat(document.getElementById('nd-load').value) || 1,
+    time_window_start: document.getElementById('nd-start').value || null,
+    time_window_end: document.getElementById('nd-end').value || null,
+    notes: document.getElementById('nd-notes').value,
+  };
+  if (!body.recipient_name || !body.address || isNaN(body.lat) || isNaN(body.lon)) {
+    alert('Name, address, latitude and longitude are required.'); return;
+  }
+  const res = await fetch('/api/deliveries', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+  if (res.ok) window.location.reload();
+  else alert('Failed to save delivery.');
+});
+</script>
+{% endblock %}

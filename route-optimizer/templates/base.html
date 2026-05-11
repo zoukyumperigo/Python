@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Spoke Dispatch{% endblock %}</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"/>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+{% if not hide_nav %}
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <span class="brand-icon">◎</span>
+    <span class="brand-name">Spoke <span class="brand-accent">Dispatch</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/dashboard" class="{% if request.path == '/dashboard' %}active{% endif %}">Dashboard</a></li>
+    <li><a href="/routes" class="{% if request.path == '/routes' %}active{% endif %}">Routes</a></li>
+    <li><a href="/drivers" class="{% if request.path == '/drivers' %}active{% endif %}">Drivers</a></li>
+    <li><a href="/deliveries" class="{% if request.path == '/deliveries' %}active{% endif %}">Deliveries</a></li>
+    <li><a href="/tracking" class="{% if request.path == '/tracking' %}active{% endif %}">Live Tracking</a></li>
+  </ul>
+  <div class="nav-actions">
+    <span class="status-dot online"></span>
+    <span class="nav-user">Dispatcher</span>
+  </div>
+</nav>
+{% endif %}
+
+<main class="{% block main_class %}app-main{% endblock %}">
+  {% block content %}{% endblock %}
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

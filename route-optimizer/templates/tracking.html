@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}Live Tracking — Spoke Dispatch{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Live Tracking</h1>
+    <p class="page-sub">Real-time driver positions and delivery progress</p>
+  </div>
+  <div class="header-actions">
+    <span class="live-badge"><span class="pulse-dot"></span> LIVE</span>
+    <span id="last-update" class="last-update">Connecting…</span>
+  </div>
+</div>
+
+<div class="tracking-layout">
+  <!-- Map -->
+  <div class="tracking-map-wrap">
+    <div id="tracking-map"></div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="tracking-sidebar">
+    <div class="ts-section">
+      <h3>Active Drivers</h3>
+      <div id="tracking-drivers">
+        {% for driver in drivers %}
+        <div class="tracking-driver-row" id="tdr-{{ driver.id }}">
+          <div class="td-avatar {% if driver.status == 'on_route' %}td-active{% endif %}">
+            {{ driver.name.split()[0][0] }}{{ driver.name.split()[-1][0] }}
+          </div>
+          <div class="td-info">
+            <strong>{{ driver.name }}</strong>
+            <span id="td-status-{{ driver.id }}" class="td-status">{{ driver.status.replace('_',' ') }}</span>
+          </div>
+          <div class="td-vehicle">{{ driver.vehicle_type }}</div>
+        </div>
+        {% else %}
+        <p class="empty-state">No active drivers</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="ts-section">
+      <h3>Active Routes</h3>
+      {% for route in routes %}
+      <div class="tracking-route-card">
+        <div class="trc-header">
+          <strong>{{ route.name }}</strong>
+          <span class="status-badge status-active">active</span>
+        </div>
+        <div class="trc-details">
+          <span>{{ route.total_distance_km }} km</span>
+          <span>~{{ route.estimated_duration_min|int }} min</span>
+        </div>
+      </div>
+      {% else %}
+      <p class="empty-state">No active routes</p>
+      {% endfor %}
+    </div>
+
+    <div class="ts-section">
+      <h3>Delivery Events</h3>
+      <div id="events-feed" class="events-feed">
+        <div class="event-item event-success">
+          <span class="event-icon">✓</span>
+          <div>
+            <strong>Alice Mercer</strong>
+            <span>Delivered · Empire State Building</span>
+          </div>
+          <span class="event-time">09:42</span>
+        </div>
+        <div class="event-item event-info">
+          <span class="event-icon">🚐</span>
+          <div>
+            <strong>Marcus Johnson</strong>
+            <span>En route to Times Square</span>
+          </div>
+          <span class="event-time">09:55</span>
+        </div>
+        <div class="event-item event-success">
+          <span class="event-icon">✓</span>
+          <div>
+            <strong>Julia Santos</strong>
+            <span>Delivered · Astoria, Queens</span>
+          </div>
+          <span class="event-time">10:18</span>
+        </div>
+        <div class="event-item event-warning">
+          <span class="event-icon">⚠</span>
+          <div>
+            <strong>Carol Davis</strong>
+            <span>Approaching time window</span>
+          </div>
+          <span class="event-time">10:31</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const map = L.map('tracking-map').setView([40.73, -73.97], 11);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+const markers = {};
+const trails = {};
+
+function makeDriverIcon(name, status) {
+  const color = status === 'on_route' ? '#3b82f6' : '#6b7280';
+  const initials = name.split(' ').map(n=>n[0]).join('').substring(0,2);
+  return L.divIcon({
+    className: '',
+    iconSize: [36,36], iconAnchor:[18,18],
+    html: `<div style="background:${color};width:36px;height:36px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:12px">${initials}</div>`
+  });
+}
+
+function makeDeliveryIcon(status) {
+  const colors = {delivered:'#10b981', assigned:'#f59e0b', pending:'#6b7280', failed:'#ef4444'};
+  const color = colors[status] || '#6b7280';
+  return L.divIcon({
+    className:'', iconSize:[10,10], iconAnchor:[5,5],
+    html:`<div style="background:${color};width:10px;height:10px;border-radius:50%;border:2px solid white"></div>`
+  });
+}
+
+const socket = io();
+
+socket.on('connected', () => {
+  document.getElementById('last-update').textContent = 'Connected';
+  requestUpdates();
+});
+
+socket.on('positions_update', (drivers) => {
+  const now = new Date().toLocaleTimeString();
+  document.getElementById('last-update').textContent = `Updated ${now}`;
+
+  drivers.forEach(d => {
+    if (markers[d.id]) {
+      const oldLatLng = markers[d.id].getLatLng();
+      markers[d.id].setLatLng([d.lat, d.lon]);
+      markers[d.id].setIcon(makeDriverIcon(d.name, d.status));
+
+      // Trail
+      if (!trails[d.id]) trails[d.id] = [[oldLatLng.lat, oldLatLng.lng]];
+      trails[d.id].push([d.lat, d.lon]);
+      if (trails[d.id].length > 20) trails[d.id].shift();
+    } else {
+      markers[d.id] = L.marker([d.lat, d.lon], {icon: makeDriverIcon(d.name, d.status)})
+        .bindPopup(`<strong>${d.name}</strong><br>${d.vehicle_type}<br><span class="status-${d.status}">${d.status}</span>`)
+        .addTo(map);
+    }
+
+    // Update sidebar
+    const statusEl = document.getElementById(`td-status-${d.id}`);
+    if (statusEl) statusEl.textContent = d.status.replace('_',' ');
+  });
+});
+
+function requestUpdates() {
+  socket.emit('request_positions');
+}
+
+// Load delivery pins on map
+fetch('/api/deliveries').then(r => r.json()).then(deliveries => {
+  deliveries.forEach(d => {
+    L.marker([d.lat, d.lon], {icon: makeDeliveryIcon(d.status)})
+      .bindTooltip(`${d.recipient_name} · ${d.status}`)
+      .addTo(map);
+  });
+});
+
+// Poll every 5 seconds
+setInterval(requestUpdates, 5000);
+</script>
+{% endblock %}

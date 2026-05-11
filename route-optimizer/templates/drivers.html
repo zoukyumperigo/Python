@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}Drivers — Spoke Dispatch{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Drivers</h1>
+    <p class="page-sub">Manage your delivery team and vehicle assignments</p>
+  </div>
+  <button class="btn-primary" id="add-driver-btn">+ Add Driver</button>
+</div>
+
+<div class="drivers-grid" id="drivers-grid">
+  {% for driver in drivers %}
+  <div class="driver-card" id="dcard-{{ driver.id }}">
+    <div class="dc-header">
+      <div class="dc-avatar">{{ driver.name.split()[0][0] }}{{ driver.name.split()[-1][0] }}</div>
+      <div class="dc-info">
+        <h3>{{ driver.name }}</h3>
+        <span class="dc-email">{{ driver.email }}</span>
+      </div>
+      <span class="status-badge status-{{ driver.status }}">{{ driver.status.replace('_',' ') }}</span>
+    </div>
+    <div class="dc-details">
+      <div class="dc-detail"><span>Vehicle</span><strong>{{ driver.vehicle_type }}</strong></div>
+      <div class="dc-detail"><span>Capacity</span><strong>{{ driver.capacity|int }} units</strong></div>
+      <div class="dc-detail"><span>Phone</span><strong>{{ driver.phone or '—' }}</strong></div>
+    </div>
+    <div class="dc-actions">
+      <button class="btn-ghost btn-sm" onclick="editDriver({{ driver.id }}, '{{ driver.name }}', '{{ driver.email }}', '{{ driver.phone }}', '{{ driver.vehicle_type }}', {{ driver.capacity }}, '{{ driver.status }}')">Edit</button>
+      <select class="status-select" onchange="updateDriverStatus({{ driver.id }}, this.value)">
+        <option value="available" {% if driver.status=='available' %}selected{% endif %}>Available</option>
+        <option value="on_route" {% if driver.status=='on_route' %}selected{% endif %}>On route</option>
+        <option value="offline" {% if driver.status=='offline' %}selected{% endif %}>Offline</option>
+      </select>
+      <button class="btn-danger btn-sm" onclick="deleteDriver({{ driver.id }})">Delete</button>
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-page-state" id="empty-state">
+    <div class="eps-icon">🚐</div>
+    <h3>No drivers yet</h3>
+    <p>Add your first driver to get started.</p>
+    <button class="btn-primary" onclick="document.getElementById('add-driver-btn').click()">Add Driver</button>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Modal -->
+<div id="driver-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">Add Driver</h3>
+      <button class="modal-close" id="close-driver-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-driver-id">
+      <div class="form-group">
+        <label>Full name *</label>
+        <input type="text" id="d-name" class="form-input" placeholder="Jane Smith">
+      </div>
+      <div class="form-group">
+        <label>Email *</label>
+        <input type="email" id="d-email" class="form-input" placeholder="jane@company.com">
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" id="d-phone" class="form-input" placeholder="+1-555-0100">
+      </div>
+      <div class="form-row form-row--2col">
+        <div class="form-group">
+          <label>Vehicle type</label>
+          <select id="d-vehicle" class="form-input">
+            <option>Van</option>
+            <option>Truck</option>
+            <option>Cargo Bike</option>
+            <option>Motorcycle</option>
+            <option>Electric Van</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Capacity (units)</label>
+          <input type="number" id="d-capacity" class="form-input" value="100" min="1">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" id="cancel-driver-modal">Cancel</button>
+      <button class="btn-primary" id="save-driver-btn">Save Driver</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function openModal(title='Add Driver') {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('driver-modal').classList.remove('hidden');
+}
+function closeModal() {
+  document.getElementById('driver-modal').classList.add('hidden');
+  ['edit-driver-id','d-name','d-email','d-phone','d-capacity'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('d-vehicle').value = 'Van';
+}
+
+document.getElementById('add-driver-btn').addEventListener('click', () => openModal('Add Driver'));
+document.getElementById('close-driver-modal').addEventListener('click', closeModal);
+document.getElementById('cancel-driver-modal').addEventListener('click', closeModal);
+
+function editDriver(id, name, email, phone, vehicle, capacity, status) {
+  document.getElementById('edit-driver-id').value = id;
+  document.getElementById('d-name').value = name;
+  document.getElementById('d-email').value = email;
+  document.getElementById('d-phone').value = phone;
+  document.getElementById('d-vehicle').value = vehicle;
+  document.getElementById('d-capacity').value = capacity;
+  openModal('Edit Driver');
+}
+
+document.getElementById('save-driver-btn').addEventListener('click', async () => {
+  const id = document.getElementById('edit-driver-id').value;
+  const body = {
+    name: document.getElementById('d-name').value,
+    email: document.getElementById('d-email').value,
+    phone: document.getElementById('d-phone').value,
+    vehicle_type: document.getElementById('d-vehicle').value,
+    capacity: parseFloat(document.getElementById('d-capacity').value) || 100,
+  };
+  if (!body.name || !body.email) { alert('Name and email are required'); return; }
+
+  const url = id ? `/api/drivers/${id}` : '/api/drivers';
+  const method = id ? 'PUT' : 'POST';
+  const res = await fetch(url, {method, headers: {'Content-Type':'application/json'}, body: JSON.stringify(body)});
+  if (res.ok) { window.location.reload(); }
+  else { alert('Failed to save driver. Email may already be in use.'); }
+});
+
+async function updateDriverStatus(id, status) {
+  await fetch(`/api/drivers/${id}`, {method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({status})});
+}
+
+async function deleteDriver(id) {
+  if (!confirm('Delete this driver?')) return;
+  await fetch(`/api/drivers/${id}`, {method:'DELETE'});
+  document.getElementById(`dcard-${id}`)?.remove();
+}
+</script>
+{% endblock %}

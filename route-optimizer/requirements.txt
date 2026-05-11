@@ -1,0 +1,5 @@
+flask>=3.0.0
+flask-sqlalchemy>=3.1.0
+flask-socketio>=5.3.6
+simple-websocket>=1.0.0
+geopy>=2.4.1

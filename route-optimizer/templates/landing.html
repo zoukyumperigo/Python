@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+{% set hide_nav = true %}
+{% block title %}Spoke Dispatch — Route Optimization for Last-Mile Delivery{% endblock %}
+{% block body_class %}landing-page{% endblock %}
+{% block main_class %}{% endblock %}
+
+{% block content %}
+<!-- ===== LANDING NAV ===== -->
+<nav class="landing-nav">
+  <a href="/" class="nav-brand">
+    <span class="brand-icon">◎</span>
+    <span class="brand-name">Spoke <span class="brand-accent">Dispatch</span></span>
+  </a>
+  <ul class="landing-nav-links">
+    <li><a href="#features">Product</a></li>
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#case-studies">Customers</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <div class="landing-nav-actions">
+    <a href="/dashboard" class="btn-ghost">Log in</a>
+    <a href="/dashboard" class="btn-primary">Start free trial</a>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-badge">The ultimate guide to route optimization in 2026</div>
+  <h1 class="hero-headline">
+    Plan faster routes.<br>
+    Cut fuel costs.<br>
+    <span class="headline-accent">Keep customers happy.</span>
+  </h1>
+  <p class="hero-sub">
+    Everything your delivery business needs to transform last-mile logistics from a cost center into a competitive advantage — powered by smart routing algorithms and real-time visibility.
+  </p>
+  <div class="hero-ctas">
+    <a href="/dashboard" class="btn-primary btn-lg">Start free trial</a>
+    <a href="#how-it-works" class="btn-outline btn-lg">See how it works</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><strong>3+ hrs</strong><span>saved per dispatcher daily</span></div>
+    <div class="stat"><strong>40%</strong><span>reduction in fuel costs</span></div>
+    <div class="stat"><strong>99%</strong><span>on-time delivery rate</span></div>
+    <div class="stat"><strong>144 t</strong><span>CO₂ saved annually</span></div>
+  </div>
+  <div class="hero-map-preview">
+    <div id="hero-map"></div>
+    <div class="map-overlay-badge">
+      <span class="pulse-dot"></span> 12 drivers active
+    </div>
+  </div>
+</section>
+
+<!-- ===== GUIDE TOC ===== -->
+<section class="toc-section">
+  <div class="container">
+    <h2>What's in this guide</h2>
+    <ol class="toc-list">
+      <li><a href="#what-is">What is route optimization?</a></li>
+      <li><a href="#manual">Can't I just optimize routes manually?</a></li>
+      <li><a href="#how-it-works">What does route optimization look like in action?</a></li>
+      <li><a href="#who-for">Who is route optimization for?</a></li>
+      <li><a href="#benefits">The benefits of route optimization</a></li>
+      <li><a href="#features">Features of route optimization software</a></li>
+      <li><a href="#case-studies">Route optimization in action</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===== CHAPTER 1 ===== -->
+<section class="chapter" id="what-is">
+  <div class="container">
+    <div class="chapter-label">Chapter 1</div>
+    <h2>What is route optimization?</h2>
+    <p>Route optimization is figuring out the smartest, most efficient way for your drivers to complete their stops — not just the shortest path, but the <em>best</em> path given real-world constraints like traffic, delivery time windows, vehicle capacity, driver schedules, and customer priorities.</p>
+    <p>Modern route optimization software uses algorithms (and increasingly, AI) to analyze dozens of variables simultaneously and produce routes that no human dispatcher could match by hand in the same time frame.</p>
+    <div class="chapter-cards">
+      <div class="card-feature">
+        <div class="cf-icon">⚡</div>
+        <h3>Save time</h3>
+        <p>Reduce planning from hours to minutes. Dispatchers click once — the algorithm does the rest.</p>
+      </div>
+      <div class="card-feature">
+        <div class="cf-icon">🔄</div>
+        <h3>Adapt quickly</h3>
+        <p>Traffic jam? New stop added? Re-optimize instantly without starting over.</p>
+      </div>
+      <div class="card-feature">
+        <div class="cf-icon">💰</div>
+        <h3>Reduce costs</h3>
+        <p>Fewer miles driven means less fuel, less wear on vehicles, and lower operational overhead.</p>
+      </div>
+      <div class="card-feature">
+        <div class="cf-icon">⭐</div>
+        <h3>Build trust</h3>
+        <p>Reliable, on-time deliveries with accurate ETAs keep customers coming back.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CHAPTER 2 ===== -->
+<section class="chapter chapter-alt" id="manual">
+  <div class="container">
+    <div class="chapter-label">Chapter 2</div>
+    <h2>Can't I just optimize routes manually?</h2>
+    <p>With 3 drivers and 15 stops, maybe. With 15 drivers and 300 stops? The number of possible route combinations becomes astronomically large — far beyond what any human can reasonably evaluate in the time available before the morning run.</p>
+    <div class="problems-grid">
+      <div class="problem-item">
+        <span class="problem-x">✗</span>
+        <div>
+          <strong>Human error</strong>
+          <p>Missed time windows, overlooked capacity limits, and wrong turn-by-turn sequences are common in manual planning.</p>
+        </div>
+      </div>
+      <div class="problem-item">
+        <span class="problem-x">✗</span>
+        <div>
+          <strong>Impossible to scale</strong>
+          <p>Manual planning doesn't grow with your business. Each new driver or stop multiplies planning complexity.</p>
+        </div>
+      </div>
+      <div class="problem-item">
+        <span class="problem-x">✗</span>
+        <div>
+          <strong>Knowledge dependency</strong>
+          <p>Route knowledge locked in one dispatcher's head is a single point of failure.</p>
+        </div>
+      </div>
+      <div class="problem-item">
+        <span class="problem-x">✗</span>
+        <div>
+          <strong>No real-time flexibility</strong>
+          <p>When plans change mid-day, manual re-routing takes too long and introduces new errors.</p>
+        </div>
+      </div>
+    </div>
+    <div class="switch-banner">
+      <strong>Signs it's time to switch:</strong> increasing late deliveries · rising fuel costs · planning takes over 30 minutes · can't keep up with business growth
+    </div>
+  </div>
+</section>
+
+<!-- ===== CHAPTER 3 – HOW IT WORKS ===== -->
+<section class="chapter" id="how-it-works">
+  <div class="container">
+    <div class="chapter-label">Chapter 3</div>
+    <h2>What does route optimization look like in action?</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h3>Upload your deliveries</h3>
+          <p>Import stops via CSV, API, or enter them manually. Add time windows, special instructions, or load weights.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h3>Click "Optimize"</h3>
+          <p>Our algorithm analyses every possible combination and builds the most efficient multi-vehicle route plan in seconds.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h3>Review & assign drivers</h3>
+          <p>Dispatchers see routes on a map, adjust if needed, then push directly to driver mobile apps.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <h3>Track in real time</h3>
+          <p>Live GPS tracking, delivery status updates, and customer notifications — all from one dashboard.</p>
+        </div>
+      </div>
+    </div>
+    <div class="cta-inline">
+      <a href="/dashboard" class="btn-primary btn-lg">Try it now — free</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CHAPTER 4 – WHO FOR ===== -->
+<section class="chapter chapter-alt" id="who-for">
+  <div class="container">
+    <div class="chapter-label">Chapter 4</div>
+    <h2>Who is route optimization for?</h2>
+    <div class="who-grid">
+      <div class="who-card">
+        <div class="who-icon">🚐</div>
+        <h3>Courier services</h3>
+        <p>Local couriers with a handful of drivers making dozens of stops daily.</p>
+      </div>
+      <div class="who-card">
+        <div class="who-icon">🏭</div>
+        <h3>Logistics companies</h3>
+        <p>Mid-to-large operators managing hundreds of vehicles across multiple depots.</p>
+      </div>
+      <div class="who-card">
+        <div class="who-icon">💊</div>
+        <h3>Medical & pharma</h3>
+        <p>Time-critical, temperature-sensitive deliveries where precision is non-negotiable.</p>
+      </div>
+      <div class="who-card">
+        <div class="who-icon">🛒</div>
+        <h3>E-commerce</h3>
+        <p>Same-day and next-day delivery operations competing on speed and reliability.</p>
+      </div>
+      <div class="who-card">
+        <div class="who-icon">🍕</div>
+        <h3>Food distribution</h3>
+        <p>Restaurants, grocers, and dark kitchens delivering within tight time windows.</p>
+      </div>
+      <div class="who-card">
+        <div class="who-icon">🔧</div>
+        <h3>Field service</h3>
+        <p>Technicians and service teams visiting multiple sites per day.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CHAPTER 5 – BENEFITS ===== -->
+<section class="chapter" id="benefits">
+  <div class="container">
+    <div class="chapter-label">Chapter 5</div>
+    <h2>The benefits of route optimization</h2>
+    <div class="benefits-list">
+      <div class="benefit">
+        <div class="benefit-icon">📋</div>
+        <div>
+          <h3>Smoother operations</h3>
+          <p>Dispatchers spend less time on planning and more on exceptions that need human judgment.</p>
+        </div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">🕐</div>
+        <div>
+          <h3>Hit every time window</h3>
+          <p>The algorithm respects customer time windows and driver shift limits automatically.</p>
+        </div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">📈</div>
+        <div>
+          <h3>Increase capacity without more headcount</h3>
+          <p>More stops per driver per day means you scale revenue without proportionally scaling cost.</p>
+        </div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">⛽</div>
+        <div>
+          <h3>Reduce fuel & operational costs</h3>
+          <p>Optimized routes consistently eliminate 10–30% of unnecessary mileage.</p>
+        </div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">💬</div>
+        <div>
+          <h3>Delight customers</h3>
+          <p>Accurate ETAs, SMS/email notifications, and on-time arrivals build loyalty.</p>
+        </div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">🌱</div>
+        <div>
+          <h3>Reduce carbon emissions</h3>
+          <p>Fewer miles = less fuel = less CO₂. Optimized routes are inherently more sustainable.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CHAPTER 6 – FEATURES ===== -->
+<section class="chapter chapter-alt" id="features">
+  <div class="container">
+    <div class="chapter-label">Chapter 6</div>
+    <h2>Features of route optimization software</h2>
+    <div class="features-grid">
+      <div class="feature-item"><span>✓</span> One-click route optimization</div>
+      <div class="feature-item"><span>✓</span> Live GPS driver tracking</div>
+      <div class="feature-item"><span>✓</span> Delivery time windows</div>
+      <div class="feature-item"><span>✓</span> Vehicle capacity management</div>
+      <div class="feature-item"><span>✓</span> Real-time route edits</div>
+      <div class="feature-item"><span>✓</span> Customer SMS/email notifications</div>
+      <div class="feature-item"><span>✓</span> Driver mobile app with navigation</div>
+      <div class="feature-item"><span>✓</span> Barcode scanning & proof of delivery</div>
+      <div class="feature-item"><span>✓</span> Delivery zone management</div>
+      <div class="feature-item"><span>✓</span> Analytics & reporting dashboard</div>
+      <div class="feature-item"><span>✓</span> REST API integration</div>
+      <div class="feature-item"><span>✓</span> Multi-depot support</div>
+    </div>
+    <div class="cta-inline">
+      <a href="/dashboard" class="btn-primary btn-lg">Explore the dashboard</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CASE STUDIES ===== -->
+<section class="chapter" id="case-studies">
+  <div class="container">
+    <div class="chapter-label">Chapter 7</div>
+    <h2>Route optimization in action</h2>
+    <div class="case-studies">
+      <div class="case-study">
+        <div class="cs-logo">CarryAll</div>
+        <div class="cs-tag">Oversized logistics · Hungary</div>
+        <blockquote>"Spoke Dispatch saved our dispatch team more than 3 hours every single day. What used to be a painful morning planning session is now a single click."</blockquote>
+        <div class="cs-results">
+          <div class="cs-result"><strong>3+ hrs</strong> saved daily</div>
+          <div class="cs-result"><strong>One click</strong> routing</div>
+        </div>
+      </div>
+      <div class="case-study">
+        <div class="cs-logo">e-boten.de</div>
+        <div class="cs-tag">Pharmaceutical courier · Germany</div>
+        <blockquote>"We scaled from 2 drivers to 9 cities across Germany. With Spoke, our all-electric fleet now serves 7,000+ pharmacies with 45-minute same-day delivery."</blockquote>
+        <div class="cs-results">
+          <div class="cs-result"><strong>7,000+</strong> pharmacies</div>
+          <div class="cs-result"><strong>144 t</strong> CO₂ saved/yr</div>
+          <div class="cs-result"><strong>45 min</strong> same-day</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="chapter chapter-alt" id="faq">
+  <div class="container">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>What is a Route Optimization API?</summary>
+        <p>A route optimization API accepts a list of stops and constraints (capacity, time windows, etc.) and returns optimized route sequences. It can be integrated into your own software via HTTP requests, giving you optimization power without building the algorithm yourself.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Can Google Maps do route optimization?</summary>
+        <p>Google Maps can handle basic multi-stop routing for up to 10 stops, but it doesn't support vehicle capacity constraints, time windows, multi-driver splits, or real-time re-optimization — all of which are essential for professional delivery operations.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What algorithms are used for route optimization?</summary>
+        <p>Modern route optimization uses a combination of techniques: nearest-neighbor heuristics for fast initial routes, 2-opt and 3-opt local search for refinement, and metaheuristics like genetic algorithms or simulated annealing for large-scale problems. AI and machine learning are increasingly used to predict traffic and improve estimates.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Can route optimization reduce carbon emissions?</summary>
+        <p>Yes. By eliminating unnecessary mileage, optimized routes directly reduce fuel consumption. For electric fleets, shorter routes also extend battery life. Companies using Spoke Dispatch report up to 144 tonnes of CO₂ saved annually.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What's the difference between route optimization and GPS navigation?</summary>
+        <p>GPS navigation finds the shortest path between two fixed points. Route optimization determines the best <em>sequence</em> of many stops across multiple vehicles, considering capacity, time windows, driver availability, and more — before navigation even begins.</p>
+      </details>
+      <details class="faq-item">
+        <summary>How quickly can I get started?</summary>
+        <p>Most teams are up and running within an hour. Import your stop list, add your drivers, click optimize — and your first routes are ready. No lengthy onboarding or IT integration required to start seeing value.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FINAL CTA ===== -->
+<section class="final-cta">
+  <div class="container">
+    <h2>Ready to transform your delivery operations?</h2>
+    <p>Join thousands of delivery businesses saving time and money with Spoke Dispatch.</p>
+    <a href="/dashboard" class="btn-primary btn-xl">Start your free trial</a>
+    <p class="cta-note">No credit card required · 14-day free trial · Cancel anytime</p>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="landing-footer">
+  <div class="container">
+    <div class="footer-brand">
+      <span class="brand-icon">◎</span>
+      <span class="brand-name">Spoke <span class="brand-accent">Dispatch</span></span>
+    </div>
+    <div class="footer-links">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/routes">Routes</a>
+      <a href="/drivers">Drivers</a>
+      <a href="/tracking">Live Tracking</a>
+    </div>
+    <p class="footer-copy">© 2026 Spoke Dispatch. Built for last-mile excellence.</p>
+  </div>
+</footer>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const heroMap = L.map('hero-map', { zoomControl: false, dragging: false, scrollWheelZoom: false }).setView([40.73, -73.97], 11);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '' }).addTo(heroMap);
+
+  // Demo markers
+  const stops = [
+    [40.7484,-73.9967],[40.7580,-73.9855],[40.7851,-73.9683],
+    [40.7061,-73.9969],[40.8296,-73.9262],[40.5755,-73.9707],
+    [40.7678,-73.8330],[40.6437,-74.0731],[40.7447,-73.9485]
+  ];
+  const colors = ['#3b82f6','#f59e0b','#10b981'];
+  stops.forEach((s, i) => {
+    const color = colors[i % 3];
+    const icon = L.divIcon({ className:'', html:`<div style="background:${color};width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>`, iconSize:[12,12] });
+    L.marker(s, {icon}).addTo(heroMap);
+  });
+
+  // Demo route polylines
+  L.polyline([[40.7484,-73.9967],[40.7580,-73.9855],[40.7851,-73.9683],[40.8296,-73.9262]], {color:'#3b82f6',weight:3,opacity:.7}).addTo(heroMap);
+  L.polyline([[40.7061,-73.9969],[40.7447,-73.9485],[40.7678,-73.8330],[40.6437,-74.0731]], {color:'#f59e0b',weight:3,opacity:.7}).addTo(heroMap);
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({behavior:'smooth'}); }
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+{% block title %}Route Planner — Spoke Dispatch{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Route Planner</h1>
+    <p class="page-sub">Optimize and assign multi-stop routes to your drivers</p>
+  </div>
+</div>
+
+<div class="planner-layout">
+  <!-- Left panel: controls -->
+  <div class="planner-sidebar">
+
+    <!-- Depot -->
+    <div class="sidebar-section">
+      <h3>Depot</h3>
+      <div class="form-row">
+        <input type="text" id="depot-address" class="form-input" placeholder="Depot address" value="Manhattan, New York, NY">
+      </div>
+      <div class="form-row form-row--2col">
+        <input type="number" id="depot-lat" class="form-input" placeholder="Latitude" value="40.7128" step="0.0001">
+        <input type="number" id="depot-lon" class="form-input" placeholder="Longitude" value="-74.0060" step="0.0001">
+      </div>
+    </div>
+
+    <!-- Stops -->
+    <div class="sidebar-section">
+      <div class="section-header">
+        <h3>Delivery Stops</h3>
+        <button class="btn-ghost btn-sm" id="load-pending-btn">Load pending</button>
+      </div>
+      <div id="stops-list" class="stops-list"></div>
+      <button class="btn-outline btn-sm w-full mt-2" id="add-stop-btn">+ Add stop manually</button>
+    </div>
+
+    <!-- Vehicles -->
+    <div class="sidebar-section">
+      <h3>Vehicles</h3>
+      <div id="vehicles-list" class="vehicles-list">
+        {% for d in drivers %}
+        <label class="vehicle-check">
+          <input type="checkbox" name="vehicle" value="{{ d.id }}" data-capacity="{{ d.capacity }}" data-name="{{ d.name }}">
+          <span class="vc-name">{{ d.name }}</span>
+          <span class="vc-type">{{ d.vehicle_type }}</span>
+          <span class="vc-cap">{{ d.capacity|int }} cap</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="sidebar-section">
+      <button class="btn-primary w-full" id="optimize-btn">⚡ Optimize Routes</button>
+      <div id="optimize-result" class="optimize-result hidden"></div>
+      <button class="btn-outline w-full mt-2 hidden" id="save-routes-btn">Save & Assign Routes</button>
+    </div>
+  </div>
+
+  <!-- Map -->
+  <div class="planner-map-wrap">
+    <div id="planner-map"></div>
+    <div class="map-legend">
+      <span class="legend-dot" style="background:#f59e0b"></span> Depot
+      <span class="legend-dot" style="background:#3b82f6"></span> Stop
+      <span class="legend-dot" style="background:#10b981"></span> Optimized route
+    </div>
+  </div>
+</div>
+
+<!-- Modal: add stop -->
+<div id="add-stop-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add Delivery Stop</h3>
+      <button class="modal-close" id="close-add-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Recipient name</label>
+        <input type="text" id="m-name" class="form-input" placeholder="Jane Smith">
+      </div>
+      <div class="form-group">
+        <label>Address</label>
+        <input type="text" id="m-address" class="form-input" placeholder="123 Main St, New York, NY">
+      </div>
+      <div class="form-row form-row--2col">
+        <div class="form-group">
+          <label>Latitude</label>
+          <input type="number" id="m-lat" class="form-input" placeholder="40.7128" step="0.0001">
+        </div>
+        <div class="form-group">
+          <label>Longitude</label>
+          <input type="number" id="m-lon" class="form-input" placeholder="-74.0060" step="0.0001">
+        </div>
+      </div>
+      <div class="form-row form-row--2col">
+        <div class="form-group">
+          <label>Window start</label>
+          <input type="time" id="m-start" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Window end</label>
+          <input type="time" id="m-end" class="form-input">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Load units</label>
+        <input type="number" id="m-load" class="form-input" value="1" min="0.1" step="0.1">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" id="cancel-add-modal">Cancel</button>
+      <button class="btn-primary" id="confirm-add-stop">Add stop</button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const map = L.map('planner-map').setView([40.73, -73.97], 11);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '© OpenStreetMap'}).addTo(map);
+
+let stops = [];
+let routeLayers = [];
+
+const depotIcon = L.divIcon({
+  className:'', iconSize:[20,20], iconAnchor:[10,10],
+  html:'<div style="background:#f59e0b;width:20px;height:20px;border-radius:4px;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>'
+});
+
+let depotMarker = L.marker([40.7128, -74.0060], {icon: depotIcon}).bindPopup('Depot').addTo(map);
+
+function stopIcon(color='#3b82f6') {
+  return L.divIcon({
+    className:'', iconSize:[12,12], iconAnchor:[6,6],
+    html:`<div style="background:${color};width:12px;height:12px;border-radius:50%;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>`
+  });
+}
+
+function renderStopsList() {
+  const el = document.getElementById('stops-list');
+  if (stops.length === 0) {
+    el.innerHTML = '<p class="empty-state">No stops added. Load pending deliveries or add manually.</p>';
+    return;
+  }
+  el.innerHTML = stops.map((s, i) => `
+    <div class="stop-item">
+      <span class="stop-num">${i+1}</span>
+      <div class="stop-info">
+        <strong>${s.recipient_name}</strong>
+        <span>${s.address}</span>
+        ${s.time_window_start ? `<span class="stop-window">${s.time_window_start}–${s.time_window_end}</span>` : ''}
+      </div>
+      <button class="btn-icon-del" onclick="removeStop(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function removeStop(i) {
+  stops.splice(i, 1);
+  renderStopsList();
+  refreshMapStops();
+}
+
+function refreshMapStops() {
+  routeLayers.forEach(l => map.removeLayer(l));
+  routeLayers = [];
+  stops.forEach(s => {
+    const m = L.marker([s.lat, s.lon], {icon: stopIcon()}).bindTooltip(s.recipient_name).addTo(map);
+    routeLayers.push(m);
+  });
+}
+
+// Load pending deliveries
+document.getElementById('load-pending-btn').addEventListener('click', async () => {
+  const deliveries = await fetch('/api/deliveries').then(r => r.json());
+  const pending = deliveries.filter(d => d.status === 'pending');
+  stops = pending.map(d => ({
+    id: d.id, recipient_name: d.recipient_name, address: d.address,
+    lat: d.lat, lon: d.lon, load: d.load,
+    time_window_start: d.time_window_start, time_window_end: d.time_window_end
+  }));
+  renderStopsList();
+  refreshMapStops();
+  if (stops.length) map.fitBounds(stops.map(s => [s.lat, s.lon]), {padding:[40,40]});
+});
+
+// Manual add modal
+document.getElementById('add-stop-btn').addEventListener('click', () => {
+  document.getElementById('add-stop-modal').classList.remove('hidden');
+});
+['close-add-modal','cancel-add-modal'].forEach(id => {
+  document.getElementById(id).addEventListener('click', () =>
+    document.getElementById('add-stop-modal').classList.add('hidden'));
+});
+document.getElementById('confirm-add-stop').addEventListener('click', () => {
+  const name = document.getElementById('m-name').value.trim();
+  const address = document.getElementById('m-address').value.trim();
+  const lat = parseFloat(document.getElementById('m-lat').value);
+  const lon = parseFloat(document.getElementById('m-lon').value);
+  if (!name || !address || isNaN(lat) || isNaN(lon)) { alert('Fill in all required fields'); return; }
+  stops.push({
+    id: null, recipient_name: name, address,
+    lat, lon, load: parseFloat(document.getElementById('m-load').value) || 1,
+    time_window_start: document.getElementById('m-start').value || null,
+    time_window_end: document.getElementById('m-end').value || null,
+  });
+  renderStopsList();
+  refreshMapStops();
+  document.getElementById('add-stop-modal').classList.add('hidden');
+});
+
+// Click map to add stop
+map.on('click', e => {
+  const name = prompt('Recipient name for this stop?');
+  if (!name) return;
+  const address = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
+  stops.push({id: null, recipient_name: name, address, lat: e.latlng.lat, lon: e.latlng.lng, load: 1});
+  renderStopsList();
+  refreshMapStops();
+});
+
+let optimizedRoutes = null;
+
+// Optimize
+document.getElementById('optimize-btn').addEventListener('click', async () => {
+  if (stops.length < 2) { alert('Add at least 2 stops to optimize.'); return; }
+
+  const selectedVehicles = [...document.querySelectorAll('input[name="vehicle"]:checked')].map(el => ({
+    id: parseInt(el.value), capacity: parseFloat(el.dataset.capacity), name: el.dataset.name
+  }));
+  if (selectedVehicles.length === 0) { alert('Select at least one driver/vehicle.'); return; }
+
+  const btn = document.getElementById('optimize-btn');
+  btn.textContent = '⏳ Optimizing...'; btn.disabled = true;
+
+  const payload = {
+    depot: { lat: parseFloat(document.getElementById('depot-lat').value), lon: parseFloat(document.getElementById('depot-lon').value), address: document.getElementById('depot-address').value },
+    stops: stops.map(s => ({id: s.id, lat: s.lat, lon: s.lon, address: s.address, recipient_name: s.recipient_name, load: s.load})),
+    vehicles: selectedVehicles,
+  };
+
+  try {
+    const result = await fetch('/api/optimize', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) }).then(r => r.json());
+    optimizedRoutes = result;
+
+    // Draw routes
+    routeLayers.forEach(l => map.removeLayer(l));
+    routeLayers = [];
+
+    const colors = ['#10b981','#3b82f6','#f59e0b','#ef4444','#8b5cf6'];
+    const depot = payload.depot;
+
+    result.routes.forEach((route, ri) => {
+      const color = colors[ri % colors.length];
+      const coords = [[depot.lat, depot.lon], ...route.stops.map(s => [s.lat, s.lon]), [depot.lat, depot.lon]];
+      const poly = L.polyline(coords, {color, weight: 4, opacity: 0.8}).addTo(map);
+      routeLayers.push(poly);
+      route.stops.forEach((s, si) => {
+        const m = L.marker([s.lat, s.lon], {icon: stopIcon(color)})
+          .bindPopup(`<strong>${s.recipient_name}</strong><br>Stop ${si+1}<br>${s.address}`).addTo(map);
+        routeLayers.push(m);
+      });
+    });
+
+    map.fitBounds(routeLayers.filter(l => l.getBounds).length ? L.featureGroup(routeLayers).getBounds() : [[40.6, -74.1],[40.9,-73.7]], {padding:[30,30]});
+
+    const resultEl = document.getElementById('optimize-result');
+    resultEl.classList.remove('hidden');
+    resultEl.innerHTML = `
+      <div class="result-summary">
+        <strong>Optimization complete!</strong>
+        <div class="result-stats">
+          ${result.routes.map((r, i) => `
+            <div class="result-route" style="border-left:3px solid ${colors[i%colors.length]}">
+              <span>Vehicle ${i+1}</span>
+              <span>${r.stops.length} stops · ${r.distance_km} km · ~${Math.round(r.estimated_duration_min)} min</span>
+            </div>
+          `).join('')}
+          <div class="result-total">Total: ${result.total_distance_km} km</div>
+        </div>
+      </div>`;
+
+    document.getElementById('save-routes-btn').classList.remove('hidden');
+  } catch(e) {
+    alert('Optimization failed. Please try again.');
+  } finally {
+    btn.textContent = '⚡ Optimize Routes'; btn.disabled = false;
+  }
+});
+
+// Save routes
+document.getElementById('save-routes-btn').addEventListener('click', async () => {
+  if (!optimizedRoutes) return;
+  const selectedVehicles = [...document.querySelectorAll('input[name="vehicle"]:checked')].map(el => ({
+    id: parseInt(el.value), name: el.dataset.name
+  }));
+
+  for (let i = 0; i < optimizedRoutes.routes.length; i++) {
+    const route = optimizedRoutes.routes[i];
+    const driver = selectedVehicles[i] || selectedVehicles[selectedVehicles.length-1];
+    await fetch('/api/routes', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name: `${driver.name} – ${new Date().toLocaleDateString()}`,
+        driver_id: driver.id,
+        total_distance_km: route.distance_km,
+        estimated_duration_min: route.estimated_duration_min,
+        stops_order: route.stops.filter(s => s.id).map(s => s.id),
+      })
+    });
+  }
+  alert('Routes saved and drivers notified!');
+  window.location.href = '/dashboard';
+});
+
+renderStopsList();
+</script>
+{% endblock %}
