@@ -1,0 +1,212 @@
+@import "tailwindcss";
+
+/* ─── CSS Custom Properties ─────────────────────────────────────────────── */
+:root {
+  /* Base surfaces */
+  --background: #f0f4f8;
+  --surface: #ffffff;
+  --surface-2: #e8f0f8;
+  --foreground: #0f172a;
+  --foreground-muted: #475569;
+  --border: #cbd5e1;
+
+  /* Frozen / cold brand palette */
+  --frost-50: #eff6ff;
+  --frost-100: #dbeafe;
+  --frost-200: #bfdbfe;
+  --frost-300: #93c5fd;
+  --frost-400: #60a5fa;
+  --frost-500: #3b82f6;
+  --frost-600: #2563eb;
+  --frost-700: #1d4ed8;
+  --frost-800: #1e40af;
+  --frost-900: #1e3a8a;
+
+  --cyan-400: #22d3ee;
+  --cyan-500: #06b6d4;
+  --cyan-600: #0891b2;
+
+  --indigo-500: #6366f1;
+  --indigo-600: #4f46e5;
+  --indigo-700: #4338ca;
+
+  /* Status colours */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #3b82f6;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* Radii */
+  --radius-sm: 0.375rem;
+  --radius: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  /* Transitions */
+  --transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Dark mode ──────────────────────────────────────────────────────────── */
+.dark {
+  --background: #0a0f1e;
+  --surface: #0f172a;
+  --surface-2: #1e293b;
+  --foreground: #e2e8f0;
+  --foreground-muted: #94a3b8;
+  --border: #1e293b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --background: #0a0f1e;
+    --surface: #0f172a;
+    --surface-2: #1e293b;
+    --foreground: #e2e8f0;
+    --foreground-muted: #94a3b8;
+    --border: #1e293b;
+  }
+}
+
+/* ─── Tailwind theme extension ───────────────────────────────────────────── */
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--foreground-muted);
+  --color-border: var(--border);
+
+  --color-frost-50: var(--frost-50);
+  --color-frost-100: var(--frost-100);
+  --color-frost-200: var(--frost-200);
+  --color-frost-300: var(--frost-300);
+  --color-frost-400: var(--frost-400);
+  --color-frost-500: var(--frost-500);
+  --color-frost-600: var(--frost-600);
+  --color-frost-700: var(--frost-700);
+  --color-frost-800: var(--frost-800);
+  --color-frost-900: var(--frost-900);
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+
+/* ─── Base styles ────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--transition-slow), color var(--transition-slow);
+}
+
+/* ─── Custom scrollbar ───────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--frost-300);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--frost-500);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--frost-600);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--frost-300) transparent;
+}
+
+/* ─── Smooth transitions for interactive elements ────────────────────────── */
+a,
+button,
+input,
+select,
+textarea {
+  transition: all var(--transition);
+}
+
+/* ─── Focus ring ─────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--frost-500);
+  outline-offset: 2px;
+}
+
+/* ─── Selection ──────────────────────────────────────────────────────────── */
+::selection {
+  background-color: var(--frost-200);
+  color: var(--frost-900);
+}
+
+.dark ::selection {
+  background-color: var(--frost-700);
+  color: var(--frost-100);
+}
+
+/* ─── Utility: frost glass card ─────────────────────────────────────────── */
+.frost-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(148, 196, 253, 0.3);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.dark .frost-card {
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(30, 58, 138, 0.4);
+}
+
+/* ─── Gradient backgrounds ───────────────────────────────────────────────── */
+.gradient-frost {
+  background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #2563eb 100%);
+}
+
+.gradient-frost-subtle {
+  background: linear-gradient(135deg, #eff6ff 0%, #eef2ff 50%, #ecfeff 100%);
+}
+
+.dark .gradient-frost-subtle {
+  background: linear-gradient(135deg, #0a0f1e 0%, #0f172a 50%, #071520 100%);
+}

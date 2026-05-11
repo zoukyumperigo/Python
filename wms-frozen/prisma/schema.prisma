@@ -1,0 +1,604 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  WAREHOUSE_MANAGER
+  OPERATOR
+  PURCHASING
+  COMMERCIAL
+  SHIPPING
+}
+
+enum StockStatus {
+  AVAILABLE
+  RESERVED
+  BLOCKED
+  DAMAGED
+  RETURNED
+  IN_REVIEW
+  QUARANTINE
+  EXPIRED
+}
+
+enum MovementType {
+  RECEIVING
+  SHIPPING
+  TRANSFER
+  ADJUSTMENT
+  INVENTORY
+  RETURN
+  WASTE
+  QUARANTINE
+}
+
+enum LocationType {
+  PICKING
+  RESERVE
+  RECEIVING
+  SHIPPING
+  QUARANTINE
+  STAGING
+}
+
+enum ReceivingStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  APPROVED
+  WITH_DIVERGENCE
+  CANCELLED
+}
+
+enum ShippingOrderStatus {
+  PENDING
+  CONFIRMED
+  IN_PICKING
+  PICKED
+  DISPATCHED
+  CANCELLED
+}
+
+enum TaskType {
+  RECEIVE
+  INSPECT
+  PUTAWAY
+  REPLENISH
+  PICK
+  TRANSFER
+  INVENTORY
+  SHIP
+}
+
+enum TaskStatus {
+  PENDING
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  BLOCKED
+}
+
+enum TaskPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum DivergenceType {
+  RECEIVING_DIFFERENCE
+  INCOMPLETE_PICKING
+  NEGATIVE_STOCK
+  NO_LOCATION
+  EXPIRED_LOT
+  BLOCKED_PRODUCT
+  STALLED_ORDER
+  PENDING_TASK
+  OPERATOR_ERROR
+  TEMPERATURE_BREACH
+}
+
+enum DivergenceStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum DivergencePriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum InventoryStatus {
+  DRAFT
+  IN_PROGRESS
+  COUNTING
+  REVIEW
+  APPROVED
+  CLOSED
+}
+
+enum InventoryType {
+  TOTAL
+  PARTIAL
+  BY_PRODUCT
+  BY_LOCATION
+  BY_CATEGORY
+  BY_LOT
+  CYCLIC
+}
+
+enum Unit {
+  BOX
+  KG
+  UNIT
+  PALLET
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  password     String
+  role         UserRole  @default(OPERATOR)
+  avatar       String?
+  phone        String?
+  active       Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  tasks        Task[]
+  pickingTasks PickingTask[]
+  comments     Comment[]
+  inventoryCounts InventoryCount[]
+  movements    StockMovement[]
+  receivings   Receiving[]
+  assignedDivergences Divergence[] @relation("AssignedDivergences")
+
+  @@map("users")
+}
+
+model ProductCategory {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  color       String?
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  products    Product[]
+
+  @@map("product_categories")
+}
+
+model Product {
+  id             String          @id @default(cuid())
+  code           String          @unique
+  name           String
+  nameZh         String?
+  categoryId     String
+  brand          String?
+  unit           Unit            @default(BOX)
+  weightPerBox   Float?
+  barcode        String?
+  temperature    Float?
+  minStock       Float           @default(0)
+  idealStock     Float           @default(0)
+  active         Boolean         @default(true)
+  requiresLot    Boolean         @default(true)
+  requiresExpiry Boolean         @default(true)
+  shelfLifeDays  Int?
+  aliases        String[]
+  imageUrl       String?
+  notes          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  category       ProductCategory @relation(fields: [categoryId], references: [id])
+  stockLots      StockLot[]
+  receivingItems ReceivingItem[]
+  shippingItems  ShippingOrderItem[]
+  pickingItems   PickingTaskItem[]
+  inventoryItems InventoryItem[]
+
+  @@map("products")
+}
+
+model Zone {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  temperature Float?
+  description String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  aisles      Aisle[]
+
+  @@map("zones")
+}
+
+model Aisle {
+  id        String   @id @default(cuid())
+  code      String
+  name      String
+  zoneId    String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  zone      Zone     @relation(fields: [zoneId], references: [id])
+  shelves   Shelf[]
+
+  @@unique([code, zoneId])
+  @@map("aisles")
+}
+
+model Shelf {
+  id        String     @id @default(cuid())
+  code      String
+  aisleId   String
+  active    Boolean    @default(true)
+  createdAt DateTime   @default(now())
+
+  aisle     Aisle      @relation(fields: [aisleId], references: [id])
+  locations Location[]
+
+  @@unique([code, aisleId])
+  @@map("shelves")
+}
+
+model Location {
+  id        String       @id @default(cuid())
+  code      String       @unique
+  shelfId   String
+  level     Int
+  position  Int
+  type      LocationType @default(PICKING)
+  capacity  Float?
+  active    Boolean      @default(true)
+  createdAt DateTime     @default(now())
+
+  shelf     Shelf        @relation(fields: [shelfId], references: [id])
+  stockLots StockLot[]
+  tasks     Task[]
+
+  @@map("locations")
+}
+
+model Supplier {
+  id        String     @id @default(cuid())
+  code      String     @unique
+  name      String
+  country   String?
+  contact   String?
+  email     String?
+  phone     String?
+  active    Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  stockLots  StockLot[]
+  receivings Receiving[]
+
+  @@map("suppliers")
+}
+
+model Customer {
+  id             String          @id @default(cuid())
+  code           String          @unique
+  name           String
+  nif            String?
+  address        String?
+  contact        String?
+  email          String?
+  phone          String?
+  active         Boolean         @default(true)
+  notes          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  shippingOrders ShippingOrder[]
+
+  @@map("customers")
+}
+
+model StockLot {
+  id             String      @id @default(cuid())
+  productId      String
+  lotNumber      String
+  supplierId     String?
+  locationId     String?
+  expiryDate     DateTime?
+  productionDate DateTime?
+  quantity       Float       @default(0)
+  quantityKg     Float?
+  reservedQty    Float       @default(0)
+  status         StockStatus @default(AVAILABLE)
+  receivingItemId String?
+  notes          String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  product        Product     @relation(fields: [productId], references: [id])
+  supplier       Supplier?   @relation(fields: [supplierId], references: [id])
+  location       Location?   @relation(fields: [locationId], references: [id])
+  receivingItem  ReceivingItem? @relation(fields: [receivingItemId], references: [id])
+  movements      StockMovement[]
+  pickingItems   PickingTaskItem[]
+  shippingItems  ShippingOrderItem[]
+
+  @@map("stock_lots")
+}
+
+model StockMovement {
+  id             String       @id @default(cuid())
+  type           MovementType
+  stockLotId     String?
+  quantity       Float
+  quantityKg     Float?
+  fromLocationId String?
+  toLocationId   String?
+  reference      String?
+  userId         String?
+  notes          String?
+  createdAt      DateTime     @default(now())
+
+  stockLot       StockLot?    @relation(fields: [stockLotId], references: [id])
+  user           User?        @relation(fields: [userId], references: [id])
+
+  @@map("stock_movements")
+}
+
+model Receiving {
+  id             String          @id @default(cuid())
+  code           String          @unique
+  supplierId     String
+  documentNumber String?
+  expectedDate   DateTime?
+  receivedDate   DateTime?
+  status         ReceivingStatus @default(PENDING)
+  hasDivergence  Boolean         @default(false)
+  notes          String?
+  createdById    String?
+  approvedById   String?
+  approvedAt     DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  supplier       Supplier        @relation(fields: [supplierId], references: [id])
+  createdBy      User?           @relation(fields: [createdById], references: [id])
+  items          ReceivingItem[]
+  divergences    Divergence[]
+  comments       Comment[]
+
+  @@map("receivings")
+}
+
+model ReceivingItem {
+  id             String    @id @default(cuid())
+  receivingId    String
+  productId      String
+  expectedQty    Float
+  receivedQty    Float     @default(0)
+  lotNumber      String?
+  expiryDate     DateTime?
+  productionDate DateTime?
+  quantityKg     Float?
+  unitCost       Float?
+  notes          String?
+  createdAt      DateTime  @default(now())
+
+  receiving      Receiving @relation(fields: [receivingId], references: [id])
+  product        Product   @relation(fields: [productId], references: [id])
+  stockLots      StockLot[]
+
+  @@map("receiving_items")
+}
+
+model ShippingOrder {
+  id            String              @id @default(cuid())
+  code          String              @unique
+  customerId    String
+  route         String?
+  requestedDate DateTime?
+  shippedDate   DateTime?
+  status        ShippingOrderStatus @default(PENDING)
+  notes         String?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  customer      Customer            @relation(fields: [customerId], references: [id])
+  items         ShippingOrderItem[]
+  pickingTasks  PickingTask[]
+  divergences   Divergence[]
+  comments      Comment[]
+
+  @@map("shipping_orders")
+}
+
+model ShippingOrderItem {
+  id              String        @id @default(cuid())
+  shippingOrderId String
+  productId       String
+  stockLotId      String?
+  requestedQty    Float
+  pickedQty       Float         @default(0)
+  shippedQty      Float         @default(0)
+  unitPrice       Float?
+  notes           String?
+  createdAt       DateTime      @default(now())
+
+  shippingOrder   ShippingOrder @relation(fields: [shippingOrderId], references: [id])
+  product         Product       @relation(fields: [productId], references: [id])
+  stockLot        StockLot?     @relation(fields: [stockLotId], references: [id])
+
+  @@map("shipping_order_items")
+}
+
+model PickingTask {
+  id              String       @id @default(cuid())
+  code            String       @unique
+  shippingOrderId String?
+  assignedToId    String?
+  status          TaskStatus   @default(PENDING)
+  priority        TaskPriority @default(NORMAL)
+  startedAt       DateTime?
+  completedAt     DateTime?
+  notes           String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  shippingOrder   ShippingOrder?  @relation(fields: [shippingOrderId], references: [id])
+  assignedTo      User?           @relation(fields: [assignedToId], references: [id])
+  items           PickingTaskItem[]
+
+  @@map("picking_tasks")
+}
+
+model PickingTaskItem {
+  id            String      @id @default(cuid())
+  pickingTaskId String
+  productId     String
+  stockLotId    String?
+  locationCode  String?
+  requestedQty  Float
+  pickedQty     Float       @default(0)
+  confirmed     Boolean     @default(false)
+  notes         String?
+  createdAt     DateTime    @default(now())
+
+  pickingTask   PickingTask @relation(fields: [pickingTaskId], references: [id])
+  product       Product     @relation(fields: [productId], references: [id])
+  stockLot      StockLot?   @relation(fields: [stockLotId], references: [id])
+
+  @@map("picking_task_items")
+}
+
+model Inventory {
+  id          String          @id @default(cuid())
+  code        String          @unique
+  type        InventoryType   @default(TOTAL)
+  status      InventoryStatus @default(DRAFT)
+  startedAt   DateTime?
+  completedAt DateTime?
+  approvedAt  DateTime?
+  notes       String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  items       InventoryItem[]
+  counts      InventoryCount[]
+  divergences Divergence[]
+
+  @@map("inventories")
+}
+
+model InventoryItem {
+  id          String    @id @default(cuid())
+  inventoryId String
+  productId   String
+  systemQty   Float
+  countedQty  Float?
+  difference  Float?
+  notes       String?
+  createdAt   DateTime  @default(now())
+
+  inventory   Inventory @relation(fields: [inventoryId], references: [id])
+  product     Product   @relation(fields: [productId], references: [id])
+
+  @@map("inventory_items")
+}
+
+model InventoryCount {
+  id           String    @id @default(cuid())
+  inventoryId  String
+  userId       String
+  locationCode String?
+  productCode  String?
+  lotNumber    String?
+  countedQty   Float
+  notes        String?
+  createdAt    DateTime  @default(now())
+
+  inventory    Inventory @relation(fields: [inventoryId], references: [id])
+  user         User      @relation(fields: [userId], references: [id])
+
+  @@map("inventory_counts")
+}
+
+model Task {
+  id           String       @id @default(cuid())
+  code         String       @unique
+  type         TaskType
+  status       TaskStatus   @default(PENDING)
+  priority     TaskPriority @default(NORMAL)
+  assignedToId String?
+  locationId   String?
+  reference    String?
+  description  String?
+  dueAt        DateTime?
+  startedAt    DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  assignedTo   User?        @relation(fields: [assignedToId], references: [id])
+  location     Location?    @relation(fields: [locationId], references: [id])
+  comments     Comment[]
+
+  @@map("tasks")
+}
+
+model Divergence {
+  id               String             @id @default(cuid())
+  code             String             @unique
+  type             DivergenceType
+  priority         DivergencePriority @default(MEDIUM)
+  status           DivergenceStatus   @default(OPEN)
+  description      String
+  assignedToId     String?
+  receivingId      String?
+  shippingOrderId  String?
+  inventoryId      String?
+  correctiveAction String?
+  resolvedAt       DateTime?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  assignedTo       User?              @relation("AssignedDivergences", fields: [assignedToId], references: [id])
+  receiving        Receiving?         @relation(fields: [receivingId], references: [id])
+  shippingOrder    ShippingOrder?     @relation(fields: [shippingOrderId], references: [id])
+  inventory        Inventory?         @relation(fields: [inventoryId], references: [id])
+  comments         Comment[]
+
+  @@map("divergences")
+}
+
+model Comment {
+  id              String         @id @default(cuid())
+  content         String
+  userId          String
+  receivingId     String?
+  shippingOrderId String?
+  divergenceId    String?
+  taskId          String?
+  attachments     String[]
+  createdAt       DateTime       @default(now())
+
+  user            User           @relation(fields: [userId], references: [id])
+  receiving       Receiving?     @relation(fields: [receivingId], references: [id])
+  shippingOrder   ShippingOrder? @relation(fields: [shippingOrderId], references: [id])
+  divergence      Divergence?    @relation(fields: [divergenceId], references: [id])
+  task            Task?          @relation(fields: [taskId], references: [id])
+
+  @@map("comments")
+}
